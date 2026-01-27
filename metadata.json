@@ -1,0 +1,8 @@
+{
+  "name": "Glow Beauty & Management",
+  "description": "A complete solution for beauty salons including online scheduling, WhatsApp integration, and a full administrative panel for site control.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
