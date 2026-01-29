@@ -258,6 +258,12 @@ export const translations = {
         'admin.settings.security.pass': 'Senha do Administrador',
         'admin.settings.security.pass_placeholder': 'Nova senha',
         'admin.settings.security.pass_sub': 'Deixe em branco para manter a senha atual ou digite para alterar.',
+        'admin.settings.stats.title': 'Métricas e Destaques',
+        'admin.settings.stats.sub': 'Edite os três boxes de diferenciais da página inicial.',
+        'admin.settings.reviews.title': 'Depoimentos e Social',
+        'admin.settings.reviews.sub': 'Gerencie a frase de destaque e métrica de clientes.',
+        'admin.settings.labels.title': 'Etiquetas Auxiliares',
+        'admin.settings.labels.sub': 'Pequenos textos acima dos títulos das seções.',
     },
     en: {
         // Navigation
@@ -517,5 +523,11 @@ export const translations = {
         'admin.settings.security.pass': 'Admin Password',
         'admin.settings.security.pass_placeholder': 'New password',
         'admin.settings.security.pass_sub': 'Leave blank to keep the current password or type to change.',
+        'admin.settings.stats.title': 'Metrics & Highlights',
+        'admin.settings.stats.sub': 'Edit the three highlight boxes on the home page.',
+        'admin.settings.reviews.title': 'Testimonials & Social',
+        'admin.settings.reviews.sub': 'Manage the highlight quote and client metrics.',
+        'admin.settings.labels.title': 'Auxiliary Labels',
+        'admin.settings.labels.sub': 'Small texts above section titles.',
     }
 };

@@ -53,6 +53,17 @@ const DEFAULT_SETTINGS: SiteSettings = {
   primaryColor: '#f43f5e',
   accentColor: '#fff1f2',
   footerDescription: 'Agende seu momento de cuidado com os melhores profissionais da região.',
+  statsResultsTitle: 'Resultados Surpreendentes',
+  statsResultsText: 'Técnicas avançadas para realçar sua beleza natural.',
+  statsProductsTitle: 'Produtos Premium',
+  statsProductsText: 'Utilizamos apenas as melhores marcas do mercado mundial.',
+  statsVipTitle: 'Atendimento VIP',
+  statsVipText: 'Experiência personalizada em um ambiente acolhedor.',
+  reviewsQuote: 'O melhor atendimento que já recebi. Saí me sentindo renovada e com a autoestima lá no alto!',
+  reviewsClients: 'Mais de 500 clientes satisfeitas',
+  teamLabel: 'Especialistas',
+  aboutLabel: 'Nossa Essência',
+  adminPassword: 'adminsalao'
 };
 
 export const db = {
@@ -70,8 +81,6 @@ export const db = {
     }));
   },
   saveServices: async (services: Service[]) => {
-    // Note: This logic might need refinement for bulk updates, 
-    // but for now we follow the existing pattern of saving the whole list.
     for (const s of services) {
       await supabase.from('services').upsert({
         id: s.id,
@@ -158,6 +167,16 @@ export const db = {
       primaryColor: data.primary_color || '#f43f5e',
       accentColor: data.accent_color || '#fff1f2',
       footerDescription: data.footer_description || '',
+      statsResultsTitle: data.stats_results_title || DEFAULT_SETTINGS.statsResultsTitle,
+      statsResultsText: data.stats_results_text || DEFAULT_SETTINGS.statsResultsText,
+      statsProductsTitle: data.stats_products_title || DEFAULT_SETTINGS.statsProductsTitle,
+      statsProductsText: data.stats_products_text || DEFAULT_SETTINGS.statsProductsText,
+      statsVipTitle: data.stats_vip_title || DEFAULT_SETTINGS.statsVipTitle,
+      statsVipText: data.stats_vip_text || DEFAULT_SETTINGS.statsVipText,
+      reviewsQuote: data.reviews_quote || DEFAULT_SETTINGS.reviewsQuote,
+      reviewsClients: data.reviews_clients || DEFAULT_SETTINGS.reviewsClients,
+      teamLabel: data.team_label || DEFAULT_SETTINGS.teamLabel,
+      aboutLabel: data.about_label || DEFAULT_SETTINGS.aboutLabel,
       adminPassword: data.admin_password || 'adminsalao'
     };
   },
@@ -182,6 +201,16 @@ export const db = {
       primary_color: settings.primaryColor,
       accent_color: settings.accentColor,
       footer_description: settings.footerDescription,
+      stats_results_title: settings.statsResultsTitle,
+      stats_results_text: settings.statsResultsText,
+      stats_products_title: settings.statsProductsTitle,
+      stats_products_text: settings.statsProductsText,
+      stats_vip_title: settings.statsVipTitle,
+      stats_vip_text: settings.statsVipText,
+      reviews_quote: settings.reviewsQuote,
+      reviews_clients: settings.reviewsClients,
+      team_label: settings.teamLabel,
+      about_label: settings.aboutLabel,
       admin_password: settings.adminPassword
     });
   },

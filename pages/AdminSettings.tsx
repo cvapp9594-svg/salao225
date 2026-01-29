@@ -333,6 +333,122 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
           </div>
         </div>
 
+        {/* Métricas e Diferenciais */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+          <SectionHeader
+            icon={Palette}
+            title={t('admin.settings.stats.title')}
+            subtitle={t('admin.settings.stats.sub')}
+          />
+          <div className="space-y-8">
+            <div className="p-6 bg-slate-50 rounded-2xl space-y-4">
+              <span className="text-[10px] font-black uppercase text-rose-500">Box 1 - Resultados</span>
+              <input
+                type="text" placeholder="Título (Ex: Resultados Surpreendentes)"
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none font-bold"
+                value={localSettings.statsResultsTitle}
+                onChange={e => setLocalSettings({ ...localSettings, statsResultsTitle: e.target.value })}
+              />
+              <textarea
+                placeholder="Descrição curta"
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none h-20 resize-none text-sm"
+                value={localSettings.statsResultsText}
+                onChange={e => setLocalSettings({ ...localSettings, statsResultsText: e.target.value })}
+              />
+            </div>
+            <div className="p-6 bg-slate-50 rounded-2xl space-y-4">
+              <span className="text-[10px] font-black uppercase text-rose-500">Box 2 - Produtos</span>
+              <input
+                type="text" placeholder="Título (Ex: Produtos Premium)"
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none font-bold"
+                value={localSettings.statsProductsTitle}
+                onChange={e => setLocalSettings({ ...localSettings, statsProductsTitle: e.target.value })}
+              />
+              <textarea
+                placeholder="Descrição curta"
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none h-20 resize-none text-sm"
+                value={localSettings.statsProductsText}
+                onChange={e => setLocalSettings({ ...localSettings, statsProductsText: e.target.value })}
+              />
+            </div>
+            <div className="p-6 bg-slate-50 rounded-2xl space-y-4">
+              <span className="text-[10px] font-black uppercase text-rose-500">Box 3 - Atendimento</span>
+              <input
+                type="text" placeholder="Título (Ex: Atendimento VIP)"
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none font-bold"
+                value={localSettings.statsVipTitle}
+                onChange={e => setLocalSettings({ ...localSettings, statsVipTitle: e.target.value })}
+              />
+              <textarea
+                placeholder="Descrição curta"
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none h-20 resize-none text-sm"
+                value={localSettings.statsVipText}
+                onChange={e => setLocalSettings({ ...localSettings, statsVipText: e.target.value })}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Depoimentos e Clientes */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+          <SectionHeader
+            icon={Users}
+            title={t('admin.settings.reviews.title')}
+            subtitle={t('admin.settings.reviews.sub')}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-400 uppercase">Frase de Destaque</label>
+              <textarea
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none h-32 resize-none"
+                value={localSettings.reviewsQuote}
+                onChange={e => setLocalSettings({ ...localSettings, reviewsQuote: e.target.value })}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-400 uppercase">Métrica de Clientes</label>
+              <input
+                type="text"
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
+                value={localSettings.reviewsClients}
+                onChange={e => setLocalSettings({ ...localSettings, reviewsClients: e.target.value })}
+                placeholder="Ex: +500 Clientes Satisfeitas"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Etiquetas Auxiliares */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+          <SectionHeader
+            icon={Type}
+            title={t('admin.settings.labels.title')}
+            subtitle={t('admin.settings.labels.sub')}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-400 uppercase">Acima da Equipe</label>
+              <input
+                type="text"
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
+                value={localSettings.teamLabel}
+                onChange={e => setLocalSettings({ ...localSettings, teamLabel: e.target.value })}
+                placeholder="Ex: Especialistas"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-400 uppercase">Acima do Sobre</label>
+              <input
+                type="text"
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
+                value={localSettings.aboutLabel}
+                onChange={e => setLocalSettings({ ...localSettings, aboutLabel: e.target.value })}
+                placeholder="Ex: Nossa Essência"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Rodapé */}
         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
           <SectionHeader

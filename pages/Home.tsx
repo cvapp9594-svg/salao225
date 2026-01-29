@@ -107,8 +107,8 @@ const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNo
               <Sparkles size={28} />
             </div>
             <div>
-              <h4 className="font-bold text-xl mb-2 text-slate-800">{t('home.stats.results.title')}</h4>
-              <p className="text-slate-500 text-sm leading-relaxed">{t('home.stats.results.text')}</p>
+              <h4 className="font-bold text-xl mb-2 text-slate-800">{language === 'en' ? t('home.stats.results.title') : (settings.statsResultsTitle || t('home.stats.results.title'))}</h4>
+              <p className="text-slate-500 text-sm leading-relaxed">{language === 'en' ? t('home.stats.results.text') : (settings.statsResultsText || t('home.stats.results.text'))}</p>
             </div>
           </div>
           <div className="flex items-start space-x-5">
@@ -116,8 +116,8 @@ const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNo
               <ShieldCheck size={28} />
             </div>
             <div>
-              <h4 className="font-bold text-xl mb-2 text-slate-800">{t('home.stats.products.title')}</h4>
-              <p className="text-slate-500 text-sm leading-relaxed">{t('home.stats.products.text')}</p>
+              <h4 className="font-bold text-xl mb-2 text-slate-800">{language === 'en' ? t('home.stats.products.title') : (settings.statsProductsTitle || t('home.stats.products.title'))}</h4>
+              <p className="text-slate-500 text-sm leading-relaxed">{language === 'en' ? t('home.stats.products.text') : (settings.statsProductsText || t('home.stats.products.text'))}</p>
             </div>
           </div>
           <div className="flex items-start space-x-5">
@@ -125,8 +125,8 @@ const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNo
               <Star size={28} />
             </div>
             <div>
-              <h4 className="font-bold text-xl mb-2 text-slate-800">{t('home.stats.vip.title')}</h4>
-              <p className="text-slate-500 text-sm leading-relaxed">{t('home.stats.vip.text')}</p>
+              <h4 className="font-bold text-xl mb-2 text-slate-800">{language === 'en' ? t('home.stats.vip.title') : (settings.statsVipTitle || t('home.stats.vip.title'))}</h4>
+              <p className="text-slate-500 text-sm leading-relaxed">{language === 'en' ? t('home.stats.vip.text') : (settings.statsVipText || t('home.stats.vip.text'))}</p>
             </div>
           </div>
         </div>
@@ -194,7 +194,9 @@ const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNo
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-24">
-            <span className="text-rose-400 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">Especialistas</span>
+            <span className="text-rose-400 font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">
+              {language === 'en' ? 'Specialists' : (settings.teamLabel || 'Especialistas')}
+            </span>
             <h2 className="text-5xl md:text-7xl font-serif font-bold mb-8 tracking-tight">
               {language === 'en' ? t('dynamic.team.title') : (settings.professionalsTitle || t('home.team.title'))}
             </h2>
@@ -245,9 +247,11 @@ const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNo
                 <div className="flex -space-x-2">
                   {[1, 2, 3].map(i => <img key={i} src={`https://i.pravatar.cc/100?u=${i + 10}`} className="w-10 h-10 rounded-full border-2 border-white" />)}
                 </div>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('home.reviews.clients')}</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  {language === 'en' ? t('home.reviews.clients') : (settings.reviewsClients || t('home.reviews.clients'))}
+                </span>
               </div>
-              <p className="text-sm font-bold text-slate-800 leading-tight">"{t('home.reviews.quote')}"</p>
+              <p className="text-sm font-bold text-slate-800 leading-tight">"{language === 'en' ? t('home.reviews.quote') : (settings.reviewsQuote || t('home.reviews.quote'))}"</p>
               <div className="flex mt-2">
                 {[1, 2, 3, 4, 5].map(i => <Star key={i} size={12} className="text-amber-400 fill-amber-400" />)}
               </div>
@@ -255,7 +259,9 @@ const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNo
           </div>
 
           <div className="lg:pl-12">
-            <span className="text-rose-500 font-black uppercase tracking-[0.3em] text-[10px] mb-6 block">Nossa Essência</span>
+            <span className="text-rose-500 font-black uppercase tracking-[0.3em] text-[10px] mb-6 block">
+              {language === 'en' ? 'Our Essence' : (settings.aboutLabel || 'Nossa Essência')}
+            </span>
             <h2 className="text-5xl md:text-7xl font-serif font-bold text-slate-900 mb-10 leading-[1] tracking-tight">
               {language === 'en' ? t('dynamic.about.title') : (settings.aboutTitle || t('home.about.title'))}
             </h2>

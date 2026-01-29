@@ -57,6 +57,16 @@ export interface SiteSettings {
   primaryColor: string;
   accentColor: string;
   footerDescription: string;
+  statsResultsTitle: string;
+  statsResultsText: string;
+  statsProductsTitle: string;
+  statsProductsText: string;
+  statsVipTitle: string;
+  statsVipText: string;
+  reviewsQuote: string;
+  reviewsClients: string;
+  teamLabel: string;
+  aboutLabel: string;
   adminPassword?: string;
 }
 
