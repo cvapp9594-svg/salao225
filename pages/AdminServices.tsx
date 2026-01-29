@@ -50,7 +50,7 @@ const AdminServices: React.FC<AdminServicesProps> = ({ services, categories, onU
           <h1 className="text-3xl font-serif font-bold text-slate-800">Catálogo de Serviços</h1>
           <p className="text-slate-500">Configure os tratamentos oferecidos aos seus clientes.</p>
         </div>
-        <button 
+        <button
           onClick={() => { setIsAdding(!isAdding); setEditingService(null); }}
           className="bg-rose-500 text-white font-black uppercase tracking-widest text-xs px-6 py-4 rounded-2xl hover:bg-rose-600 transition shadow-lg shadow-rose-200"
         >
@@ -62,67 +62,67 @@ const AdminServices: React.FC<AdminServicesProps> = ({ services, categories, onU
       {(isAdding || editingService) && (
         <div className="bg-white p-8 rounded-[2.5rem] border-2 border-rose-100 shadow-xl space-y-6 animate-fade-in-up">
           <h3 className="text-xl font-bold text-slate-800 flex items-center">
-            <Scissors className="mr-3 text-rose-500" size={20}/> 
+            <Scissors className="mr-3 text-rose-500" size={20} />
             {editingService ? `Editando: ${editingService.name}` : 'Novo Serviço'}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nome do Serviço</label>
-              <input 
-                type="text" placeholder="Ex: Hidratação profunda" 
-                className="w-full p-4 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none bg-slate-50/30" 
-                value={editingService ? editingService.name : newService.name || ''} 
-                onChange={e => editingService ? setEditingService({...editingService, name: e.target.value}) : setNewService({...newService, name: e.target.value})}
+              <input
+                type="text" placeholder="Ex: Hidratação profunda"
+                className="w-full p-4 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none bg-slate-50/30"
+                value={editingService ? editingService.name : newService.name || ''}
+                onChange={e => editingService ? setEditingService({ ...editingService, name: e.target.value }) : setNewService({ ...newService, name: e.target.value })}
               />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Categoria</label>
-              <select 
+              <select
                 className="w-full p-4 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none bg-slate-50/30 appearance-none"
                 value={editingService ? editingService.categoryId : newService.categoryId || ''}
-                onChange={e => editingService ? setEditingService({...editingService, categoryId: e.target.value}) : setNewService({...newService, categoryId: e.target.value})}
+                onChange={e => editingService ? setEditingService({ ...editingService, categoryId: e.target.value }) : setNewService({ ...newService, categoryId: e.target.value })}
               >
                 <option value="">Selecionar...</option>
                 {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Preço (R$)</label>
-              <input 
-                type="number" placeholder="0.00" 
-                className="w-full p-4 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none bg-slate-50/30" 
-                value={editingService ? editingService.price : newService.price || ''} 
-                onChange={e => editingService ? setEditingService({...editingService, price: Number(e.target.value)}) : setNewService({...newService, price: Number(e.target.value)})}
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Preço ($00)</label>
+              <input
+                type="number" placeholder="0.00"
+                className="w-full p-4 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none bg-slate-50/30"
+                value={editingService ? editingService.price : newService.price || ''}
+                onChange={e => editingService ? setEditingService({ ...editingService, price: Number(e.target.value) }) : setNewService({ ...newService, price: Number(e.target.value) })}
               />
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Duração (minutos)</label>
-              <input 
-                type="number" placeholder="60" 
-                className="w-full p-4 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none bg-slate-50/30" 
-                value={editingService ? editingService.duration : newService.duration || ''} 
-                onChange={e => editingService ? setEditingService({...editingService, duration: Number(e.target.value)}) : setNewService({...newService, duration: Number(e.target.value)})}
+              <input
+                type="number" placeholder="60"
+                className="w-full p-4 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none bg-slate-50/30"
+                value={editingService ? editingService.duration : newService.duration || ''}
+                onChange={e => editingService ? setEditingService({ ...editingService, duration: Number(e.target.value) }) : setNewService({ ...newService, duration: Number(e.target.value) })}
               />
             </div>
             <div className="md:col-span-2 lg:col-span-4 space-y-1">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Breve Descrição</label>
-              <textarea 
+              <textarea
                 className="w-full p-4 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none bg-slate-50/30 h-24 resize-none"
-                value={editingService ? editingService.description : newService.description || ''} 
-                onChange={e => editingService ? setEditingService({...editingService, description: e.target.value}) : setNewService({...newService, description: e.target.value})}
+                value={editingService ? editingService.description : newService.description || ''}
+                onChange={e => editingService ? setEditingService({ ...editingService, description: e.target.value }) : setNewService({ ...newService, description: e.target.value })}
                 placeholder="Detalhes sobre o procedimento..."
               />
             </div>
           </div>
           <div className="flex justify-end space-x-3 pt-4 border-t border-slate-50">
-            <button 
+            <button
               onClick={() => { setIsAdding(false); setEditingService(null); }}
               className="px-8 py-4 text-slate-400 font-bold hover:bg-slate-50 rounded-xl"
             >
               Cancelar
             </button>
-            <button 
-              onClick={editingService ? handleSaveEdit : handleAdd} 
+            <button
+              onClick={editingService ? handleSaveEdit : handleAdd}
               className="bg-slate-900 text-white font-black uppercase tracking-widest text-xs px-10 py-4 rounded-xl hover:bg-slate-800 transition shadow-xl"
             >
               <Save size={18} className="mr-2 inline" />
@@ -138,17 +138,17 @@ const AdminServices: React.FC<AdminServicesProps> = ({ services, categories, onU
           return (
             <div key={s.id} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col group hover:shadow-2xl hover:border-rose-100 transition-all duration-500 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-rose-50 rounded-bl-[4rem] -mr-12 -mt-12 group-hover:scale-150 transition-transform duration-700 opacity-30"></div>
-              
+
               <div className="flex justify-between items-start mb-6 relative z-10">
                 <div className="bg-rose-50 text-rose-500 p-4 rounded-2xl group-hover:bg-rose-500 group-hover:text-white transition-all duration-500">
                   <Scissors size={24} />
                 </div>
                 <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => { setEditingService(s); setIsAdding(false); window.scrollTo({top: 0, behavior: 'smooth'}); }} className="p-2.5 bg-white text-slate-400 hover:text-rose-500 rounded-xl shadow-sm border border-slate-100"><Edit2 size={18}/></button>
-                  <button onClick={() => handleDelete(s.id)} className="p-2.5 bg-white text-slate-400 hover:text-red-500 rounded-xl shadow-sm border border-slate-100"><Trash2 size={18}/></button>
+                  <button onClick={() => { setEditingService(s); setIsAdding(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="p-2.5 bg-white text-slate-400 hover:text-rose-500 rounded-xl shadow-sm border border-slate-100"><Edit2 size={18} /></button>
+                  <button onClick={() => handleDelete(s.id)} className="p-2.5 bg-white text-slate-400 hover:text-red-500 rounded-xl shadow-sm border border-slate-100"><Trash2 size={18} /></button>
                 </div>
               </div>
-              
+
               <div className="mb-6">
                 <h4 className="font-black text-xl text-slate-800 mb-2 group-hover:text-rose-600 transition-colors">{s.name}</h4>
                 <div className="flex items-center space-x-2">
@@ -170,7 +170,7 @@ const AdminServices: React.FC<AdminServicesProps> = ({ services, categories, onU
               <div className="flex justify-between items-center pt-6 border-t border-slate-50">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Preço</span>
-                  <span className="text-2xl font-black text-slate-900 group-hover:text-rose-600 transition-colors">R$ {s.price}</span>
+                  <span className="text-2xl font-black text-slate-900 group-hover:text-rose-600 transition-colors">{s.price}$00</span>
                 </div>
                 <div className="text-right flex flex-col">
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Duração</span>

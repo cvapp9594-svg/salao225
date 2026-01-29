@@ -1,19 +1,33 @@
 
+import { createClient } from '@supabase/supabase-js';
 import { Service, Professional, Appointment, SiteSettings, Category } from './types';
 
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 const STORAGE_KEYS = {
-  SERVICES: 'glow_services',
-  PROFESSIONALS: 'glow_professionals',
-  APPOINTMENTS: 'glow_appointments',
-  SETTINGS: 'glow_settings',
   ADMIN_AUTH: 'glow_admin_auth',
-  CATEGORIES: 'glow_categories',
 };
 
 const DEFAULT_CATEGORIES: Category[] = [
   { id: 'cat1', name: 'Cabelo' },
   { id: 'cat2', name: 'Unhas' },
   { id: 'cat3', name: 'Maquiagem' },
+];
+
+const DEFAULT_SERVICES: Service[] = [
+  { id: 'srv1', name: 'Corte e Escova', description: 'Corte personalizado e finalização perfeita.', price: 3000, duration: 60, categoryId: 'cat1', isActive: true },
+  { id: 'srv2', name: 'Manicure Completa', description: 'Cuidado completo para suas mãos.', price: 1000, duration: 45, categoryId: 'cat2', isActive: true },
+  { id: 'srv3', name: 'Maquiagem Social', description: 'Para eventos especiais e festas.', price: 4000, duration: 60, categoryId: 'cat3', isActive: true },
+  { id: 'srv4', name: 'Hidratação Profunda', description: 'Recupere o brilho e maciez dos fios.', price: 2400, duration: 45, categoryId: 'cat1', isActive: true },
+];
+
+const DEFAULT_PROFESSIONALS: Professional[] = [
+  { id: 'pro1', name: 'Ana Silva', role: 'Hair Stylist', avatar: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&q=80&w=400', bio: 'Especialista em cortes modernos e coloração.', services: ['srv1', 'srv4'] },
+  { id: 'pro2', name: 'Julia Costa', role: 'Nail Designer', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400', bio: 'Apaixonada por unhas perfeitas e arte.', services: ['srv2'] },
+  { id: 'pro3', name: 'Mariana Santos', role: 'Makeup Artist', avatar: 'https://images.unsplash.com/photo-1588731238444-43836afd7963?auto=format&fit=crop&q=80&w=400', bio: 'Realçando sua beleza natural para qualquer ocasião.', services: ['srv3'] },
 ];
 
 const DEFAULT_SETTINGS: SiteSettings = {
@@ -40,63 +54,133 @@ const DEFAULT_SETTINGS: SiteSettings = {
   accentColor: 'rose-100',
 };
 
-const DEFAULT_SERVICES: Service[] = [
-  { id: '1', name: 'Corte Feminino', description: 'Corte moderno com lavagem inclusa', price: 120, duration: 60, categoryId: 'cat1', isActive: true },
-  { id: '2', name: 'Manicure', description: 'Cutilagem e esmaltação tradicional', price: 45, duration: 40, categoryId: 'cat2', isActive: true },
-];
-
-const DEFAULT_PROFESSIONALS: Professional[] = [
-  { id: 'p1', name: 'Ana Silva', role: 'Hair Stylist', avatar: 'https://i.pravatar.cc/150?u=ana', bio: 'Especialista em cortes e coloração.', services: ['1'] },
-];
-
 export const db = {
-  getServices: (): Service[] => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.SERVICES);
-      return data ? JSON.parse(data) : DEFAULT_SERVICES;
-    } catch { return DEFAULT_SERVICES; }
+  getServices: async (): Promise<Service[]> => {
+    const { data, error } = await supabase.from('services').select('*').order('name');
+    if (error || !data || data.length === 0) return DEFAULT_SERVICES;
+    return data.map(s => ({
+      id: s.id,
+      name: s.name,
+      description: s.description,
+      price: s.price,
+      duration: s.duration,
+      categoryId: s.category_id,
+      isActive: s.is_active
+    }));
   },
-  saveServices: (services: Service[]) => {
-    localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(services));
-  },
-  getCategories: (): Category[] => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
-      return data ? JSON.parse(data) : DEFAULT_CATEGORIES;
-    } catch { return DEFAULT_CATEGORIES; }
-  },
-  saveCategories: (categories: Category[]) => {
-    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
-  },
-  getProfessionals: (): Professional[] => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.PROFESSIONALS);
-      return data ? JSON.parse(data) : DEFAULT_PROFESSIONALS;
-    } catch { return DEFAULT_PROFESSIONALS; }
-  },
-  saveProfessionals: (professionals: Professional[]) => {
-    localStorage.setItem(STORAGE_KEYS.PROFESSIONALS, JSON.stringify(professionals));
-  },
-  getAppointments: (): Appointment[] => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.APPOINTMENTS);
-      return data ? JSON.parse(data) : [];
-    } catch (e) {
-      console.error("Erro ao ler agendamentos:", e);
-      return [];
+  saveServices: async (services: Service[]) => {
+    // Note: This logic might need refinement for bulk updates, 
+    // but for now we follow the existing pattern of saving the whole list.
+    for (const s of services) {
+      await supabase.from('services').upsert({
+        id: s.id,
+        name: s.name,
+        description: s.description,
+        price: s.price,
+        duration: s.duration,
+        category_id: s.categoryId,
+        is_active: s.isActive
+      });
     }
   },
-  saveAppointments: (appointments: Appointment[]) => {
-    localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify(appointments));
+  getCategories: async (): Promise<Category[]> => {
+    const { data, error } = await supabase.from('categories').select('*').order('name');
+    if (error || !data || data.length === 0) return DEFAULT_CATEGORIES;
+    return data;
   },
-  getSettings: (): SiteSettings => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-      return data ? JSON.parse(data) : DEFAULT_SETTINGS;
-    } catch { return DEFAULT_SETTINGS; }
+  saveCategories: async (categories: Category[]) => {
+    for (const c of categories) {
+      await supabase.from('categories').upsert(c);
+    }
   },
-  saveSettings: (settings: SiteSettings) => {
-    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+  getProfessionals: async (): Promise<Professional[]> => {
+    const { data, error } = await supabase.from('professionals').select('*').order('name');
+    if (error || !data || data.length === 0) return DEFAULT_PROFESSIONALS;
+    return data;
+  },
+  saveProfessionals: async (professionals: Professional[]) => {
+    for (const p of professionals) {
+      await supabase.from('professionals').upsert(p);
+    }
+  },
+  getAppointments: async (): Promise<Appointment[]> => {
+    const { data, error } = await supabase.from('appointments').select('*').order('created_at', { ascending: false });
+    if (error || !data) return [];
+    return data.map(a => ({
+      id: a.id,
+      clientName: a.client_name,
+      clientPhone: a.client_phone,
+      serviceId: a.service_id,
+      professionalId: a.professional_id,
+      date: a.date,
+      time: a.time,
+      status: a.status,
+      reminderSent: a.reminder_sent,
+      createdAt: a.created_at
+    }));
+  },
+  saveAppointments: async (appointments: Appointment[]) => {
+    for (const a of appointments) {
+      await supabase.from('appointments').upsert({
+        id: a.id,
+        client_name: a.clientName,
+        client_phone: a.clientPhone,
+        service_id: a.serviceId,
+        professional_id: a.professionalId,
+        date: a.date,
+        time: a.time,
+        status: a.status,
+        reminder_sent: a.reminderSent,
+        created_at: a.createdAt
+      });
+    }
+  },
+  getSettings: async (): Promise<SiteSettings> => {
+    const { data, error } = await supabase.from('settings').select('*').eq('id', 'main').single();
+    if (error || !data) return DEFAULT_SETTINGS;
+    return {
+      salonName: data.salon_name,
+      logo: data.logo,
+      heroTitle: data.hero_title || '',
+      heroSubtitle: data.hero_subtitle,
+      heroImage: data.hero_image,
+      servicesTitle: data.services_title,
+      servicesSubtitle: data.services_subtitle,
+      professionalsTitle: data.professionals_title,
+      professionalsSubtitle: data.professionals_subtitle,
+      aboutTitle: data.about_title,
+      aboutText: data.about_text,
+      aboutImage: data.about_image,
+      whatsappNumber: data.whatsapp_number,
+      address: data.address,
+      openingHours: data.opening_hours,
+      primaryColor: data.primary_color,
+      accentColor: data.accent_color,
+      adminPassword: data.admin_password || 'adminsalao'
+    };
+  },
+  saveSettings: async (settings: SiteSettings) => {
+    await supabase.from('settings').upsert({
+      id: 'main',
+      salon_name: settings.salonName,
+      logo: settings.logo,
+      hero_title: settings.heroTitle,
+      hero_subtitle: settings.heroSubtitle,
+      hero_image: settings.heroImage,
+      services_title: settings.servicesTitle,
+      services_subtitle: settings.servicesSubtitle,
+      professionals_title: settings.professionalsTitle,
+      professionals_subtitle: settings.professionalsSubtitle,
+      about_title: settings.aboutTitle,
+      about_text: settings.aboutText,
+      about_image: settings.aboutImage,
+      whatsapp_number: settings.whatsappNumber,
+      address: settings.address,
+      opening_hours: settings.openingHours,
+      primary_color: settings.primaryColor,
+      accent_color: settings.accentColor,
+      admin_password: settings.adminPassword
+    });
   },
   isAdminAuthenticated: (): boolean => {
     return localStorage.getItem(STORAGE_KEYS.ADMIN_AUTH) === 'true';

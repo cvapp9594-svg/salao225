@@ -11,7 +11,7 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services, professionals }) => {
   const pending = appointments.filter(a => a.status === 'pending').length;
-  
+
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowStr = tomorrow.toISOString().split('T')[0];
@@ -44,7 +44,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
       </div>
       <h4 className="text-slate-400 font-bold text-xs uppercase tracking-widest mb-2">{title}</h4>
       <p className="text-4xl font-black text-slate-900 tracking-tight">{value}</p>
-      
+
       {/* Decorative background element */}
       <div className={`absolute -bottom-6 -right-6 w-24 h-24 rounded-full opacity-[0.03] group-hover:scale-150 transition-transform ${color.replace('bg-', 'bg-')}`}></div>
     </div>
@@ -74,7 +74,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
         <StatCard title="Agendamentos" value={appointments.length} icon={Calendar} color="bg-rose-500" trend="12" />
         <StatCard title="Confirmações Pend." value={pending} icon={Clock} color="bg-amber-500" />
         <StatCard title="Ações p/ Amanhã" value={pendingReminders} icon={Bell} color="bg-indigo-500" badge={pendingReminders > 0 ? "Foco Total" : ""} />
-        <StatCard title="Receita Prevista" value={`R$ ${totalRevenue}`} icon={TrendingUp} color="bg-emerald-500" trend="5.4" />
+        <StatCard title="Receita Prevista" value={`${totalRevenue}$00`} icon={TrendingUp} color="bg-emerald-500" trend="5.4" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -88,7 +88,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
             </h3>
             <button className="text-xs font-black text-rose-500 uppercase tracking-widest hover:opacity-70">Ver Tudo</button>
           </div>
-          
+
           <div className="space-y-6">
             {services.slice(0, 4).map(s => (
               <div key={s.id} className="flex justify-between items-center p-6 bg-slate-50/50 rounded-3xl border border-slate-50 hover:border-rose-100 hover:bg-white hover:shadow-xl transition-all duration-300">
@@ -102,7 +102,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="block font-black text-rose-500">R$ {s.price}</span>
+                  <span className="block font-black text-rose-500">{s.price}$00</span>
                   <span className="text-[10px] font-bold text-slate-300 uppercase">{s.duration} min</span>
                 </div>
               </div>
@@ -120,7 +120,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
             </h3>
             <button className="text-xs font-black text-indigo-500 uppercase tracking-widest hover:opacity-70">Log Completo</button>
           </div>
-          
+
           <div className="space-y-6">
             {appointments.slice(-4).reverse().map(a => {
               const srv = services.find(s => s.id === a.serviceId);
@@ -135,10 +135,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{srv?.name} • {a.time}</p>
                     </div>
                   </div>
-                  <span className={`px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] border shadow-sm ${
-                    a.status === 'confirmed' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 
+                  <span className={`px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] border shadow-sm ${a.status === 'confirmed' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' :
                     a.status === 'cancelled' ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-amber-50 border-amber-100 text-amber-600'
-                  }`}>
+                    }`}>
                     {a.status}
                   </span>
                 </div>

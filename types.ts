@@ -56,6 +56,7 @@ export interface SiteSettings {
   };
   primaryColor: string;
   accentColor: string;
+  adminPassword?: string;
 }
 
 export type View = 'home' | 'booking' | 'admin-login' | 'admin-dashboard' | 'admin-services' | 'admin-professionals' | 'admin-appointments' | 'admin-settings' | 'admin-reminders' | 'admin-history' | 'admin-categories';

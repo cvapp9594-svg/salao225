@@ -11,7 +11,10 @@ interface BookingProps {
   onComplete: (appointments: Appointment[]) => void;
 }
 
+import { useLanguage } from '../contexts/LanguageContext';
+
 const Booking: React.FC<BookingProps> = ({ settings, services, professionals, onComplete }) => {
+  const { t, language } = useLanguage();
   const [step, setStep] = useState(1);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedProfessional, setSelectedProfessional] = useState<Professional | null>(null);
@@ -21,7 +24,7 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, on
   const [clientPhone, setClientPhone] = useState('');
 
   const activeServices = services.filter(s => s.isActive);
-  
+
   const availableProfessionals = useMemo(() => {
     if (!selectedService) return [];
     return professionals.filter(p => p.services.includes(selectedService.id));
@@ -48,7 +51,7 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, on
     const existingRaw = localStorage.getItem('glow_appointments');
     const existing: Appointment[] = existingRaw ? JSON.parse(existingRaw) : [];
     const updated = [...existing, newAppointment];
-    
+
     // Notificar App.tsx para atualizar estado global
     onComplete(updated);
 
@@ -82,11 +85,10 @@ Aguardo confirmação! ✨`;
         <div className="flex justify-between items-center max-w-sm mx-auto mb-8">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="flex flex-col items-center flex-1 relative">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-500 z-10 ${
-                step > i ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200' : 
-                step === i ? 'bg-rose-500 text-white shadow-xl shadow-rose-200 scale-110' : 
-                'bg-slate-200 text-slate-500'
-              }`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-500 z-10 ${step > i ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200' :
+                step === i ? 'bg-rose-500 text-white shadow-xl shadow-rose-200 scale-110' :
+                  'bg-slate-200 text-slate-500'
+                }`}>
                 {step > i ? <Check size={18} /> : i}
               </div>
               {i < 4 && (
@@ -97,44 +99,57 @@ Aguardo confirmação! ✨`;
         </div>
         <div className="text-center">
           <h2 className="text-4xl font-serif font-black text-slate-900 mb-2">
-            {step === 1 && "O que vamos fazer hoje?"}
-            {step === 2 && "Quem irá te atender?"}
-            {step === 3 && "Quando você prefere?"}
-            {step === 4 && "Para finalizarmos..."}
-            {step === 5 && "Solicitação Enviada!"}
+            {step === 1 && t('booking.steps.service')}
+            {step === 2 && t('booking.steps.professional')}
+            {step === 3 && t('booking.steps.datetime')}
+            {step === 4 && t('booking.steps.confirm')}
+            {step === 5 && t('booking.success.title')}
           </h2>
           <p className="text-slate-500 font-medium">
-            {step === 1 && "Escolha um de nossos serviços exclusivos."}
-            {step === 2 && "Nossos especialistas estão prontos para você."}
-            {step === 3 && "Selecione a data e o horário mais convenientes."}
-            {step === 4 && "Preencha seus dados para contato rápido."}
+            {step === 1 && t('booking.step1.sub')}
+            {step === 2 && t('booking.step2.sub')}
+            {step === 3 && t('booking.step3.sub')}
+            {step === 4 && t('booking.step4.sub')}
           </p>
         </div>
       </div>
 
       <div className="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 p-8 md:p-12 border border-slate-100 transition-all duration-500 min-h-[500px] flex flex-col">
         {step === 1 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in-up">
-            {activeServices.map((service) => (
-              <button
-                key={service.id}
-                onClick={() => { setSelectedService(service); setStep(2); }}
-                className="group flex flex-col p-6 rounded-3xl border-2 border-slate-50 hover:border-rose-200 hover:bg-rose-50/20 transition-all text-left relative overflow-hidden bg-white shadow-sm"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-slate-50 text-slate-400 rounded-2xl group-hover:bg-rose-500 group-hover:text-white transition-all">
-                    <Sparkles size={20} />
-                  </div>
-                  <span className="text-xl font-black text-slate-900">R$ {service.price}</span>
-                </div>
-                <h4 className="font-black text-lg text-slate-800 mb-1">{service.name}</h4>
-                <p className="text-slate-500 text-sm line-clamp-2 mb-4">{service.description}</p>
-                <div className="mt-auto flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  <Clock size={12} className="mr-1.5" />
-                  {service.duration} MINUTOS
-                </div>
-              </button>
-            ))}
+          <div className="animate-fade-in-up">
+            {activeServices.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-slate-400 font-bold text-lg">{t('booking.empty.title')}</p>
+                <button onClick={() => window.location.reload()} className="mt-4 text-rose-500 font-bold hover:underline">{t('common.reload')}</button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {activeServices.map((service) => (
+                  <button
+                    key={service.id}
+                    onClick={() => { setSelectedService(service); setStep(2); }}
+                    className="group flex flex-col p-6 rounded-3xl border-2 border-slate-50 hover:border-rose-200 hover:bg-rose-50/20 transition-all text-left relative overflow-hidden bg-white shadow-sm"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="p-3 bg-slate-50 text-slate-400 rounded-2xl group-hover:bg-rose-500 group-hover:text-white transition-all">
+                        <Sparkles size={20} />
+                      </div>
+                      <span className="text-xl font-black text-slate-900">{service.price}$00</span>
+                    </div>
+                    <h4 className="font-black text-lg text-slate-800 mb-1">
+                      {language === 'en' ? t(`service.${service.id}.name` as any) : service.name}
+                    </h4>
+                    <p className="text-slate-500 text-sm line-clamp-2 mb-4">
+                      {language === 'en' ? t(`service.${service.id}.desc` as any) : service.description}
+                    </p>
+                    <div className="mt-auto flex items-center text-[10px] font-black uppercase tracking-widest text-slate-400">
+                      <Clock size={12} className="mr-1.5" />
+                      {service.duration} MIN
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -160,7 +175,7 @@ Aguardo confirmação! ✨`;
               ))}
             </div>
             <button onClick={() => setStep(1)} className="mt-12 text-slate-400 hover:text-rose-500 flex items-center justify-center font-bold text-sm transition-colors uppercase tracking-widest">
-              <ChevronLeft size={16} className="mr-2" /> Alterar Serviço
+              <ChevronLeft size={16} className="mr-2" /> {t('common.change')}
             </button>
           </div>
         )}
@@ -170,8 +185,8 @@ Aguardo confirmação! ✨`;
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div>
                 <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-4">1. Selecione a Data</label>
-                <input 
-                  type="date" 
+                <input
+                  type="date"
                   min={new Date().toISOString().split('T')[0]}
                   className="w-full p-6 rounded-3xl border-2 border-slate-100 focus:border-rose-300 focus:outline-none bg-slate-50/30 text-lg font-bold text-slate-800"
                   value={selectedDate}
@@ -185,11 +200,10 @@ Aguardo confirmação! ✨`;
                     <button
                       key={time}
                       onClick={() => setSelectedTime(time)}
-                      className={`py-4 rounded-2xl border-2 font-black transition-all ${
-                        selectedTime === time 
-                        ? 'border-rose-500 bg-rose-500 text-white shadow-xl shadow-rose-200' 
+                      className={`py-4 rounded-2xl border-2 font-black transition-all ${selectedTime === time
+                        ? 'border-rose-500 bg-rose-500 text-white shadow-xl shadow-rose-200'
                         : 'border-slate-50 text-slate-600 hover:border-rose-200 hover:bg-rose-50'
-                      }`}
+                        }`}
                     >
                       {time}
                     </button>
@@ -197,15 +211,15 @@ Aguardo confirmação! ✨`;
                 </div>
               </div>
             </div>
-            
+
             <div className="flex space-x-4 mt-auto">
-              <button onClick={() => setStep(2)} className="flex-1 py-6 text-slate-400 font-black uppercase tracking-widest text-xs border-2 border-slate-50 rounded-2xl hover:bg-slate-50 transition">Voltar</button>
-              <button 
+              <button onClick={() => setStep(2)} className="flex-1 py-6 text-slate-400 font-black uppercase tracking-widest text-xs border-2 border-slate-50 rounded-2xl hover:bg-slate-50 transition">{t('common.back')}</button>
+              <button
                 disabled={!selectedDate || !selectedTime}
-                onClick={() => setStep(4)} 
+                onClick={() => setStep(4)}
                 className={`flex-1 py-6 text-white font-black uppercase tracking-widest text-sm rounded-2xl shadow-2xl transition-all ${!selectedDate || !selectedTime ? 'bg-slate-200' : 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/20 active:scale-95'}`}
               >
-                Próximo Passo
+                {t('common.next')}
               </button>
             </div>
           </div>
@@ -215,12 +229,11 @@ Aguardo confirmação! ✨`;
           <div className="space-y-8 animate-fade-in-up flex-1 flex flex-col">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1">
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Seu Nome</label>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">{t('booking.input.name')}</label>
                 <div className="relative">
                   <User className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                  <input 
-                    type="text" 
-                    placeholder="Ex: Maria Oliveira"
+                  <input
+                    type="text"
                     className="w-full pl-14 p-5 rounded-2xl border-2 border-slate-100 focus:border-rose-300 focus:outline-none font-bold"
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
@@ -228,12 +241,11 @@ Aguardo confirmação! ✨`;
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Seu WhatsApp</label>
+                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">{t('booking.input.phone')}</label>
                 <div className="relative">
                   <Phone className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                  <input 
-                    type="tel" 
-                    placeholder="Número com DDD"
+                  <input
+                    type="tel"
                     className="w-full pl-14 p-5 rounded-2xl border-2 border-slate-100 focus:border-rose-300 focus:outline-none font-bold"
                     value={clientPhone}
                     onChange={(e) => setClientPhone(e.target.value)}
@@ -245,21 +257,23 @@ Aguardo confirmação! ✨`;
             <div className="p-8 bg-slate-900 rounded-[2rem] text-white flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden shadow-2xl shadow-slate-900/20">
               <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
               <div className="space-y-2 relative z-10 text-center md:text-left">
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-400">Resumo da Reserva</span>
-                <h4 className="text-2xl font-serif font-bold">{selectedService?.name}</h4>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-400">{t('booking.steps.confirm')}</span>
+                <h4 className="text-2xl font-serif font-bold">
+                  {selectedService ? (language === 'en' ? t(`service.${selectedService.id}.name` as any) : selectedService.name) : ''}
+                </h4>
                 <p className="text-slate-400 text-sm font-medium">Com {selectedProfessional?.name} em {selectedDate} às {selectedTime}</p>
               </div>
-              <div className="text-3xl font-black text-rose-400 relative z-10">R$ {selectedService?.price}</div>
+              <div className="text-3xl font-black text-rose-400 relative z-10">{selectedService?.price}$00</div>
             </div>
 
             <div className="flex space-x-4 mt-auto">
-              <button onClick={() => setStep(3)} className="flex-1 py-6 text-slate-400 font-black uppercase tracking-widest text-xs border-2 border-slate-50 rounded-2xl hover:bg-slate-50">Voltar</button>
-              <button 
+              <button onClick={() => setStep(3)} className="flex-1 py-6 text-slate-400 font-black uppercase tracking-widest text-xs border-2 border-slate-50 rounded-2xl hover:bg-slate-50">{t('common.back')}</button>
+              <button
                 onClick={handleFinish}
                 disabled={!clientName || !clientPhone}
                 className={`flex-1 py-6 text-white font-black uppercase tracking-widest text-sm rounded-2xl shadow-2xl transition-all ${!clientName || !clientPhone ? 'bg-slate-200' : 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/30 active:scale-95'}`}
               >
-                Confirmar no WhatsApp
+                {t('booking.button.confirm')}
               </button>
             </div>
           </div>
@@ -272,22 +286,22 @@ Aguardo confirmação! ✨`;
                 <Check size={48} />
               </div>
             </div>
-            <h3 className="text-4xl font-serif font-black mb-4 text-slate-900">Maravilha, {clientName.split(' ')[0]}!</h3>
+            <h3 className="text-4xl font-serif font-black mb-4 text-slate-900">{t('booking.success.title')}</h3>
             <p className="text-slate-500 mb-12 max-w-md mx-auto leading-relaxed text-lg">
-              Sua solicitação foi enviada. Agora basta aguardar nossa equipe confirmar os detalhes finais pelo WhatsApp.
+              {t('booking.success.message')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button 
+              <button
                 onClick={resetBooking}
                 className="px-12 py-5 bg-rose-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-rose-600 transition shadow-xl shadow-rose-500/20 active:scale-95"
               >
                 Novo Agendamento
               </button>
-              <button 
-                onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
+              <button
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 className="px-12 py-5 bg-slate-100 text-slate-600 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-200 transition"
               >
-                Voltar ao Início
+                {t('booking.success.button')}
               </button>
             </div>
           </div>
