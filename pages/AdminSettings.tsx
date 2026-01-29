@@ -2,7 +2,8 @@
 import * as React from 'react';
 import { useState, useRef } from 'react';
 import { SiteSettings } from '../types';
-import { Save, Image as ImageIcon, Phone, MapPin, Clock, Layout, Camera, Type, Palette, Check, Scissors, Users, Info, Lock } from 'lucide-react';
+import { Save, Image as ImageIcon, Phone, MapPin, Clock, Layout, Camera, Type, Palette, Check, Scissors, Users, Info, Lock, Eye, EyeOff } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AdminSettingsProps {
   settings: SiteSettings;
@@ -10,8 +11,10 @@ interface AdminSettingsProps {
 }
 
 const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => {
+  const { t } = useLanguage();
   const [localSettings, setLocalSettings] = useState<SiteSettings>(settings);
   const [saved, setSaved] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const heroFileRef = useRef<HTMLInputElement>(null);
   const aboutFileRef = useRef<HTMLInputElement>(null);
 
@@ -60,13 +63,13 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
     <div className="max-w-4xl mx-auto space-y-10 animate-fade-in-up pb-20">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-slate-800">Ajustes do Site</h1>
-          <p className="text-slate-500">Personalize a identidade visual e os textos do seu salão.</p>
+          <h1 className="text-3xl font-serif font-bold text-slate-800">{t('admin.settings.title')}</h1>
+          <p className="text-slate-500">{t('admin.settings.subtitle')}</p>
         </div>
         {saved && (
           <div className="flex items-center space-x-2 text-green-600 font-bold bg-green-50 px-4 py-2 rounded-full border border-green-100">
             <Check size={18} />
-            <span>Configurações Salvas!</span>
+            <span>{t('admin.settings.saved')}</span>
           </div>
         )}
       </div>
@@ -76,12 +79,12 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
           <SectionHeader
             icon={Info}
-            title="Informações Gerais"
-            subtitle="Configurações básicas de contato e identidade."
+            title={t('admin.settings.info.title')}
+            subtitle={t('admin.settings.info.sub')}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-400 uppercase">Nome do Salão</label>
+              <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.info.name')}</label>
               <input
                 type="text"
                 className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
@@ -90,7 +93,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-400 uppercase">Emoji/Logo</label>
+              <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.info.logo')}</label>
               <input
                 type="text"
                 className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
@@ -99,7 +102,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-400 uppercase">WhatsApp (Apenas Números)</label>
+              <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.info.whatsapp')}</label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                 <input
@@ -111,7 +114,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
               </div>
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-400 uppercase">Endereço Completo</label>
+              <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.info.address')}</label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                 <input
@@ -129,14 +132,14 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
           <SectionHeader
             icon={Layout}
-            title="Banner Principal (Hero)"
-            subtitle="A primeira impressão dos seus clientes ao abrir o site."
+            title={t('admin.settings.hero.title')}
+            subtitle={t('admin.settings.hero.sub')}
           />
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-400 uppercase">Título de Impacto</label>
+                  <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.hero.impact')}</label>
                   <input
                     type="text"
                     className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
@@ -145,7 +148,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-400 uppercase">Subtítulo</label>
+                  <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.hero.subtitle')}</label>
                   <textarea
                     className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none h-24 resize-none"
                     value={localSettings.heroSubtitle}
@@ -154,7 +157,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Imagem de Fundo</label>
+                <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">{t('admin.settings.hero.image')}</label>
                 <div
                   className="relative group cursor-pointer h-44 rounded-2xl overflow-hidden border-2 border-dashed border-slate-200"
                   onClick={() => heroFileRef.current?.click()}
@@ -174,8 +177,8 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
           <SectionHeader
             icon={Type}
-            title="Títulos das Seções"
-            subtitle="Customize os cabeçalhos das seções de serviços e equipe."
+            title={t('admin.settings.sections.title')}
+            subtitle={t('admin.settings.sections.sub')}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4 p-4 bg-slate-50 rounded-2xl">
@@ -219,13 +222,13 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
           <SectionHeader
             icon={ImageIcon}
-            title="Seção 'Sobre'"
-            subtitle="Conte a história do seu salão e mostre fotos do ambiente."
+            title={t('admin.settings.about.title')}
+            subtitle={t('admin.settings.about.sub')}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-400 uppercase">Título da Seção</label>
+                <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.hero.impact')}</label>
                 <input
                   type="text"
                   className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
@@ -234,7 +237,7 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-400 uppercase">Texto 'Sobre'</label>
+                <label className="text-xs font-bold text-slate-400 uppercase">Texto</label>
                 <textarea
                   className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none h-44 resize-none"
                   value={localSettings.aboutText}
@@ -262,8 +265,8 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
           <SectionHeader
             icon={Clock}
-            title="Horários de Funcionamento"
-            subtitle="Exiba quando o salão está aberto para agendamentos."
+            title={t('admin.settings.hours.title')}
+            subtitle={t('admin.settings.hours.sub')}
           />
           <div className="space-y-4">
             {Object.entries(localSettings.openingHours).map(([day, hours]) => (
@@ -285,20 +288,31 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
           <SectionHeader
             icon={Lock}
-            title="Segurança"
-            subtitle="Gerencie o acesso ao painel administrativo."
+            title={t('admin.settings.security.title')}
+            subtitle={t('admin.settings.security.sub')}
           />
           <div className="space-y-4">
-            <div className="md:w-1/2 space-y-1">
-              <label className="text-xs font-bold text-slate-400 uppercase">Senha do Administrador</label>
-              <input
-                type="text"
-                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
-                value={localSettings.adminPassword || ''}
-                onChange={e => setLocalSettings({ ...localSettings, adminPassword: e.target.value })}
-                placeholder="Nova senha"
-              />
-              <p className="text-[10px] text-slate-400 mt-1">Deixe em branco para manter a senha atual ou digite para alterar.</p>
+            <div className="md:w-1/2 space-y-2">
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('admin.settings.security.pass')}</label>
+              <div className="relative group">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full p-4 pr-12 rounded-2xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-rose-300 focus:outline-none transition-all duration-300"
+                  value={localSettings.adminPassword || ''}
+                  onChange={e => setLocalSettings({ ...localSettings, adminPassword: e.target.value })}
+                  placeholder={t('admin.settings.security.pass_placeholder')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-400 font-medium ml-1">
+                {t('admin.settings.security.pass_sub')}
+              </p>
             </div>
           </div>
         </div>
@@ -306,10 +320,12 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
         <div className="flex justify-end pt-8">
           <button
             type="submit"
-            className="bg-slate-900 text-white font-bold px-12 py-5 rounded-2xl hover:bg-slate-800 transition shadow-2xl shadow-slate-200 flex items-center transform active:scale-95"
+            className="bg-slate-900 text-white font-bold px-12 py-5 rounded-3xl hover:bg-slate-800 transition shadow-2xl shadow-slate-200 flex items-center transform active:scale-95 group"
           >
-            <Save size={24} className="mr-3" />
-            Salvar Todas as Alterações
+            <div className="p-2 bg-white/10 rounded-xl mr-4 group-hover:scale-110 transition-transform">
+              <Save size={20} />
+            </div>
+            {t('admin.settings.save')}
           </button>
         </div>
       </form>
