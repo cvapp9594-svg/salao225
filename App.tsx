@@ -29,6 +29,7 @@ const AppContent: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [preSelectedServiceIds, setPreSelectedServiceIds] = useState<string[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -62,6 +63,19 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Update theme colors when settings change
+  useEffect(() => {
+    if (settings) {
+      const root = document.documentElement;
+      root.style.setProperty('--brand-primary', settings.primaryColor);
+      root.style.setProperty('--brand-soft', settings.accentColor);
+
+      // Simple darkening for hover: we'll just use the primary color if it's already a hex
+      // For now, let's just use the same color or append a slight shift if it's hex
+      root.style.setProperty('--brand-primary-dark', settings.primaryColor);
+    }
+  }, [settings]);
+
   useEffect(() => {
     if (isAdminLoggedIn && view === 'admin-login') {
       setView('admin-dashboard');
@@ -93,11 +107,18 @@ const AppContent: React.FC = () => {
     setAppointments(newAppointments);
   };
 
-  const navigate = (v: View) => {
+  const navigate = (v: View, serviceId?: string) => {
     if (v.startsWith('admin-') && !isAdminLoggedIn && v !== 'admin-login') {
       setView('admin-login');
     } else {
       setView(v);
+      if (v === 'booking' && serviceId) {
+        setPreSelectedServiceIds(prev => prev.includes(serviceId) ? prev : [...prev, serviceId]);
+      } else if (v === 'booking') {
+        // We don't necessarily want to clear it if navigating to booking, 
+        // unless it's a fresh start. Let's keep existing items if any.
+        // setPreSelectedServiceIds([]); 
+      }
     }
     setIsMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -244,8 +265,8 @@ const AppContent: React.FC = () => {
 
           <main className={`flex-1 ${view !== 'home' ? 'pt-24' : ''}`}>
             <div className="">
-              {view === 'home' && <Home settings={settings} services={services} professionals={professionals} onBookNow={() => navigate('booking')} />}
-              {view === 'booking' && <Booking settings={settings} services={services} professionals={professionals} onComplete={handleUpdateAppointments} />}
+              {view === 'home' && <Home settings={settings} services={services} professionals={professionals} onBookNow={(id) => navigate('booking', id)} />}
+              {view === 'booking' && <Booking settings={settings} services={services} professionals={professionals} onComplete={handleUpdateAppointments} preSelectedServiceIds={preSelectedServiceIds} />}
               {view === 'admin-login' && <AdminLogin onLogin={() => { db.setAdminAuthenticated(true); setIsAdminLoggedIn(true); }} />}
             </div>
           </main>
@@ -259,29 +280,29 @@ const AppContent: React.FC = () => {
                 <span className="text-2xl leading-none">{settings.logo}</span>
               </div>
               <div>
-                <span className="block font-serif font-black text-xl text-slate-900">Admin</span>
+                <span className="block font-serif font-black text-xl text-slate-900">{t('admin.sidebar.admin')}</span>
                 <span className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{settings.salonName}</span>
               </div>
             </div>
 
-            <AdminSidebarItem target="admin-dashboard" icon={LayoutDashboard} label="Visão Geral" />
-            <AdminSidebarItem target="admin-appointments" icon={Calendar} label="Agenda Mestra" />
-            <AdminSidebarItem target="admin-history" icon={History} label="Histórico" />
+            <AdminSidebarItem target="admin-dashboard" icon={LayoutDashboard} label={t('admin.sidebar.overview')} />
+            <AdminSidebarItem target="admin-appointments" icon={Calendar} label={t('admin.sidebar.agenda')} />
+            <AdminSidebarItem target="admin-history" icon={History} label={t('admin.sidebar.history')} />
             <AdminSidebarItem
               target="admin-reminders"
               icon={Bell}
-              label="Notificações"
+              label={t('admin.sidebar.notifications')}
               count={appointments.filter(a => {
                 const tomorrowStr = new Date(Date.now() + 86400000).toISOString().split('T')[0];
                 return a.date === tomorrowStr && !a.reminderSent && a.status === 'confirmed';
               }).length}
             />
 
-            <div className="pt-10 pb-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] px-4">Gestão do Site</div>
-            <AdminSidebarItem target="admin-categories" icon={Tag} label="Categorias" />
-            <AdminSidebarItem target="admin-services" icon={Scissors} label="Serviços" />
-            <AdminSidebarItem target="admin-professionals" icon={Users} label="Nossa Equipe" />
-            <AdminSidebarItem target="admin-settings" icon={Settings} label="Configurações" />
+            <div className="pt-10 pb-4 text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] px-4">{t('admin.sidebar.site_mgmt')}</div>
+            <AdminSidebarItem target="admin-categories" icon={Tag} label={t('admin.sidebar.categories')} />
+            <AdminSidebarItem target="admin-services" icon={Scissors} label={t('admin.sidebar.services')} />
+            <AdminSidebarItem target="admin-professionals" icon={Users} label={t('admin.sidebar.team')} />
+            <AdminSidebarItem target="admin-settings" icon={Settings} label={t('admin.sidebar.settings')} />
 
             <div className="pt-12 mt-auto">
               <button
@@ -289,7 +310,7 @@ const AppContent: React.FC = () => {
                 className="group w-full flex items-center space-x-3 px-6 py-4 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all duration-300"
               >
                 <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
-                <span className="font-bold text-sm">Sair do Painel</span>
+                <span className="font-bold text-sm">{t('admin.sidebar.logout')}</span>
               </button>
             </div>
           </aside>

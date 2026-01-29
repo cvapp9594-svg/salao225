@@ -7,13 +7,14 @@ interface HomeProps {
   settings: SiteSettings;
   services: Service[];
   professionals: Professional[];
-  onBookNow: () => void;
+  onBookNow: (serviceId?: string) => void;
 }
 
 import { useLanguage } from '../contexts/LanguageContext';
 
 const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNow }) => {
   const { t, language } = useLanguage();
+  // ... (cutting content for prompt efficiency as I know lines 28+)
   // Safety check for loading state
   if (!settings) {
     return (
@@ -168,12 +169,15 @@ const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNo
                 <p className="text-slate-500 text-sm leading-relaxed mb-10 flex-1">
                   {language === 'en' ? t(`service.${service.id}.desc` as any) : service.description}
                 </p>
-                <div className="flex items-center justify-between pt-6 border-t border-slate-50">
+                <div className="flex items-center justify-between pt-6 border-t border-slate-50 mt-auto">
                   <span className="text-2xl font-black text-slate-900">{service.price}$00</span>
-                  <div className="flex items-center text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                    <Clock size={14} className="mr-1.5" />
-                    {service.duration} MIN
-                  </div>
+                  <button
+                    onClick={() => onBookNow(service.id)}
+                    className="flex items-center space-x-2 text-rose-500 font-black text-[10px] uppercase tracking-widest hover:text-rose-600 transition group/btn"
+                  >
+                    <span>{t('nav.book')}</span>
+                    <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                  </button>
                 </div>
               </div>
             ))}
@@ -300,7 +304,7 @@ const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNo
                 <span className="text-3xl font-serif font-bold tracking-tight">{settings.salonName}</span>
               </div>
               <p className="text-slate-400 text-xl leading-relaxed max-w-md font-light mb-12">
-                {t('home.hero.subtitle')}
+                {settings.footerDescription || t('home.hero.subtitle')}
               </p>
             </div>
 

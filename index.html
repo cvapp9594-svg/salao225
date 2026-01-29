@@ -11,10 +11,41 @@
     rel="stylesheet">
   <style>
     :root {
-      --primary-rose: #f43f5e;
-      --soft-rose: #fff1f2;
-    }
+      /* Brand defaults */
+      --brand-primary: #f43f5e;
+      --brand-primary-dark: #e11d48;
+      --brand-soft: #fff1f2;
 
+      /* Mapping to legacy variable names if used elsewhere, 
+         but we'll prioritize mapping Tailwind rose classes directly */
+      --primary-rose: var(--brand-primary);
+      --soft-rose: var(--brand-soft);
+    }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose: {
+              50: 'var(--brand-soft)',
+              100: 'var(--brand-soft)',
+              200: 'var(--brand-soft)',
+              300: 'var(--brand-soft)',
+              400: 'var(--brand-primary)',
+              500: 'var(--brand-primary)',
+              600: 'var(--brand-primary-dark)',
+              700: 'var(--brand-primary-dark)',
+              800: 'var(--brand-primary-dark)',
+              900: 'var(--brand-primary-dark)',
+              950: 'var(--brand-primary-dark)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
       scroll-behavior: smooth;

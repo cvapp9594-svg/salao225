@@ -56,6 +56,7 @@ export interface SiteSettings {
   };
   primaryColor: string;
   accentColor: string;
+  footerDescription: string;
   adminPassword?: string;
 }
 

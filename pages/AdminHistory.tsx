@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { useState, useMemo } from 'react';
 import { Appointment, Service, Professional } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 // Added History to the lucide-react import list to fix JSX errors
 import { Search, Filter, Phone, User, Calendar, Clock, Trash2, CheckCircle, XCircle, HelpCircle, History } from 'lucide-react';
 
@@ -13,6 +14,7 @@ interface AdminHistoryProps {
 }
 
 const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, professionals, onUpdate }) => {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateSort, setDateSort] = useState<'desc' | 'asc'>('desc');
@@ -20,8 +22,8 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
   const filteredAppointments = useMemo(() => {
     return appointments
       .filter(app => {
-        const matchesSearch = app.clientName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             app.clientPhone.includes(searchTerm);
+        const matchesSearch = app.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          app.clientPhone.includes(searchTerm);
         const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
         return matchesSearch && matchesStatus;
       })
@@ -33,7 +35,7 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
   }, [appointments, searchTerm, statusFilter, dateSort]);
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Tem certeza que deseja remover este registro permanentemente?')) {
+    if (window.confirm(t('admin.history.delete.confirm'))) {
       const updated = appointments.filter(a => a.id !== id);
       onUpdate(updated);
     }
@@ -57,17 +59,26 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
     }
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'confirmed': return t('admin.history.filter.confirmed');
+      case 'pending': return t('admin.history.filter.pending');
+      case 'cancelled': return t('admin.history.filter.cancelled');
+      default: return status;
+    }
+  };
+
   return (
     <div className="space-y-8 animate-fade-in-up">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-slate-800">Histórico de Agendamentos</h1>
-          <p className="text-slate-500">Consulte todos os registros passados e presentes.</p>
+          <h1 className="text-3xl font-serif font-bold text-slate-800">{t('admin.history.title')}</h1>
+          <p className="text-slate-500">{t('admin.history.subtitle')}</p>
         </div>
-        
+
         <div className="flex items-center space-x-2 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
           <div className="bg-slate-50 px-3 py-1 rounded-lg">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total</span>
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('common.total')}</span>
             <p className="text-xl font-bold text-slate-800">{filteredAppointments.length}</p>
           </div>
         </div>
@@ -77,36 +88,36 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Buscar por nome ou telefone..." 
+            <input
+              type="text"
+              placeholder={t('admin.history.search.placeholder')}
               className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none transition bg-slate-50/50"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          
+
           <div className="flex gap-2">
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-              <select 
+              <select
                 className="pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none transition bg-slate-50/50 appearance-none min-w-[160px]"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <option value="all">Todos Status</option>
-                <option value="confirmed">Confirmados</option>
-                <option value="pending">Pendentes</option>
-                <option value="cancelled">Cancelados</option>
+                <option value="all">{t('admin.history.filter.all')}</option>
+                <option value="confirmed">{t('admin.history.filter.confirmed')}</option>
+                <option value="pending">{t('admin.history.filter.pending')}</option>
+                <option value="cancelled">{t('admin.history.filter.cancelled')}</option>
               </select>
             </div>
 
-            <button 
+            <button
               onClick={() => setDateSort(prev => prev === 'desc' ? 'asc' : 'desc')}
               className="px-4 py-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition flex items-center gap-2 font-medium text-slate-600"
             >
               <Calendar size={16} />
-              {dateSort === 'desc' ? 'Mais recentes' : 'Mais antigos'}
+              {dateSort === 'desc' ? t('admin.history.sort.recent') : t('admin.history.sort.oldest')}
             </button>
           </div>
         </div>
@@ -116,11 +127,11 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
         <table className="w-full text-left min-w-[800px]">
           <thead>
             <tr className="bg-slate-50 border-b">
-              <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Cliente</th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Serviço / Profissional</th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Data / Hora</th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Status</th>
-              <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Ações</th>
+              <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">{t('admin.appointments.table.client')}</th>
+              <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">{t('admin.appointments.table.service')}</th>
+              <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">{t('admin.appointments.table.date')}</th>
+              <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">{t('admin.appointments.table.status')}</th>
+              <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">{t('admin.history.table.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -141,8 +152,8 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
                   </td>
                   <td className="px-6 py-5">
                     <div className="flex flex-col">
-                      <span className="font-medium text-slate-700">{srv?.name || 'Serviço removido'}</span>
-                      <span className="text-xs text-rose-500 font-medium mt-1">{pro?.name || 'Qualquer profissional'}</span>
+                      <span className="font-medium text-slate-700">{srv?.name || t('common.removed')}</span>
+                      <span className="text-xs text-rose-500 font-medium mt-1">{pro?.name || t('common.any_pro')}</span>
                     </div>
                   </td>
                   <td className="px-6 py-5">
@@ -158,11 +169,11 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
                   <td className="px-6 py-5">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getStatusStyle(app.status)}`}>
                       {getStatusIcon(app.status)}
-                      {app.status === 'confirmed' ? 'Confirmado' : app.status === 'cancelled' ? 'Cancelado' : 'Pendente'}
+                      {getStatusLabel(app.status)}
                     </span>
                   </td>
                   <td className="px-6 py-5 text-center">
-                    <button 
+                    <button
                       onClick={() => handleDelete(app.id)}
                       className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                       title="Excluir Registro"
@@ -175,14 +186,14 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
             })}
           </tbody>
         </table>
-        
+
         {filteredAppointments.length === 0 && (
           <div className="py-20 text-center">
             <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
               <History size={32} />
             </div>
-            <h3 className="text-slate-800 font-bold text-lg">Nenhum registro encontrado</h3>
-            <p className="text-slate-500 text-sm">Tente ajustar seus filtros de busca.</p>
+            <h3 className="text-slate-800 font-bold text-lg">{t('admin.history.empty')}</h3>
+            <p className="text-slate-500 text-sm">{t('common.search_fail')}</p>
           </div>
         )}
       </div>

@@ -104,14 +104,18 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.info.whatsapp')}</label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-emerald-500 rounded-md flex items-center justify-center text-white">
+                  <Phone size={14} />
+                </div>
                 <input
                   type="text"
-                  className="w-full pl-10 p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
+                  className="w-full pl-12 p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none font-bold text-emerald-600"
                   value={localSettings.whatsappNumber}
                   onChange={e => setLocalSettings({ ...localSettings, whatsappNumber: e.target.value })}
+                  placeholder="Ex: 2389999999"
                 />
               </div>
+              <p className="text-[10px] text-slate-400 mt-1">Este número será usado para todos os agendamentos via WhatsApp.</p>
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.info.address')}</label>
@@ -281,6 +285,71 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
                 />
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Cores e Estilo */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+          <SectionHeader
+            icon={Palette}
+            title={t('admin.settings.theme.title')}
+            subtitle={t('admin.settings.theme.sub')}
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('admin.settings.theme.primary')}</label>
+              <div className="flex items-center space-x-3">
+                <input
+                  type="color"
+                  className="w-12 h-12 rounded-lg border-0 cursor-pointer p-0 overflow-hidden"
+                  value={localSettings.primaryColor}
+                  onChange={e => setLocalSettings({ ...localSettings, primaryColor: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="flex-1 p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none font-mono uppercase text-sm"
+                  value={localSettings.primaryColor}
+                  onChange={e => setLocalSettings({ ...localSettings, primaryColor: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('admin.settings.theme.accent')}</label>
+              <div className="flex items-center space-x-3">
+                <input
+                  type="color"
+                  className="w-12 h-12 rounded-lg border-0 cursor-pointer p-0 overflow-hidden"
+                  value={localSettings.accentColor}
+                  onChange={e => setLocalSettings({ ...localSettings, accentColor: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="flex-1 p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none font-mono uppercase text-sm"
+                  value={localSettings.accentColor}
+                  onChange={e => setLocalSettings({ ...localSettings, accentColor: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Rodapé */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+          <SectionHeader
+            icon={Layout}
+            title={t('admin.settings.footer.title')}
+            subtitle={t('admin.settings.footer.sub')}
+          />
+          <div className="space-y-4">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.footer.desc')}</label>
+              <textarea
+                className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none h-32 resize-none"
+                value={localSettings.footerDescription}
+                onChange={e => setLocalSettings({ ...localSettings, footerDescription: e.target.value })}
+                placeholder={t('home.hero.subtitle')}
+              />
+            </div>
           </div>
         </div>
 

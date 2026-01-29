@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useState, useRef } from 'react';
 import { Professional, Service } from '../types';
 import { Plus, Trash2, Edit2, UserPlus, Scissors, Camera, Check, X, User, Save } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AdminProfessionalsProps {
   professionals: Professional[];
@@ -11,16 +12,17 @@ interface AdminProfessionalsProps {
 }
 
 const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, services, onUpdate }) => {
+  const { t } = useLanguage();
   const [isAdding, setIsAdding] = useState(false);
   const [editingPro, setEditingPro] = useState<Professional | null>(null);
-  const [newPro, setNewPro] = useState<Partial<Professional>>({ 
+  const [newPro, setNewPro] = useState<Partial<Professional>>({
     name: '',
     role: '',
     avatar: 'https://i.pravatar.cc/150?u=placeholder',
     bio: '',
-    services: [] 
+    services: []
   });
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -79,7 +81,7 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Remover este profissional da equipe?')) {
+    if (confirm(t('admin.professionals.delete.confirm'))) {
       onUpdate(professionals.filter(p => p.id !== id));
     }
   };
@@ -88,73 +90,73 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
     <div className="space-y-8 animate-fade-in-up pb-20">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-slate-800">Equipe</h1>
-          <p className="text-slate-500">Gerencie os talentos que fazem seu salão brilhar.</p>
+          <h1 className="text-3xl font-serif font-bold text-slate-800">{t('admin.professionals.title')}</h1>
+          <p className="text-slate-500">{t('admin.professionals.subtitle')}</p>
         </div>
-        <button 
+        <button
           onClick={() => { setIsAdding(!isAdding); setEditingPro(null); }}
           className="bg-rose-500 text-white font-bold px-6 py-3 rounded-2xl hover:bg-rose-600 transition flex items-center shadow-lg shadow-rose-200"
         >
-          {isAdding ? <X size={20} className="mr-2"/> : <UserPlus size={20} className="mr-2"/>}
-          {isAdding ? 'Cancelar' : 'Novo Profissional'}
+          {isAdding ? <X size={20} className="mr-2" /> : <UserPlus size={20} className="mr-2" />}
+          {isAdding ? t('common.cancel') : t('admin.professionals.btn.add')}
         </button>
       </div>
 
       {(isAdding || editingPro) && (
         <div className="bg-white p-8 rounded-3xl border-2 border-rose-100 shadow-xl space-y-6 animate-fade-in-up">
           <h2 className="text-xl font-bold text-slate-800 flex items-center">
-            {editingPro ? <Edit2 size={20} className="mr-2 text-rose-500"/> : <Plus size={20} className="mr-2 text-rose-500"/>}
-            {editingPro ? `Editando: ${editingPro.name}` : 'Cadastrar Novo Profissional'}
+            {editingPro ? <Edit2 size={20} className="mr-2 text-rose-500" /> : <Plus size={20} className="mr-2 text-rose-500" />}
+            {editingPro ? t('admin.professionals.form.edit').replace('{name}', editingPro.name) : t('admin.professionals.form.new')}
           </h2>
-          
+
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex flex-col items-center space-y-4">
-              <div 
-                className="relative group cursor-pointer" 
+              <div
+                className="relative group cursor-pointer"
                 onClick={() => editingPro ? editFileInputRef.current?.click() : fileInputRef.current?.click()}
               >
-                <img 
-                  src={editingPro ? editingPro.avatar : newPro.avatar} 
-                  className="w-32 h-32 rounded-full object-cover ring-4 ring-rose-50 shadow-lg group-hover:brightness-75 transition" 
+                <img
+                  src={editingPro ? editingPro.avatar : newPro.avatar}
+                  className="w-32 h-32 rounded-full object-cover ring-4 ring-rose-50 shadow-lg group-hover:brightness-75 transition"
                 />
                 <div className="absolute inset-0 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition">
                   <Camera size={24} />
                 </div>
-                <input 
-                  type="file" 
-                  ref={editingPro ? editFileInputRef : fileInputRef} 
-                  className="hidden" 
-                  accept="image/*" 
-                  onChange={(e) => handleImageUpload(e, !!editingPro)} 
+                <input
+                  type="file"
+                  ref={editingPro ? editFileInputRef : fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, !!editingPro)}
                 />
               </div>
-              <p className="text-xs font-bold text-slate-400 uppercase">Foto do Perfil</p>
+              <p className="text-xs font-bold text-slate-400 uppercase">{t('admin.professionals.form.photo')}</p>
             </div>
-            
+
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-400 uppercase">Nome Completo</label>
-                <input 
+                <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.professionals.form.name')}</label>
+                <input
                   type="text" className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
-                  value={editingPro ? editingPro.name : newPro.name} 
-                  onChange={e => editingPro ? setEditingPro({...editingPro, name: e.target.value}) : setNewPro({...newPro, name: e.target.value})}
+                  value={editingPro ? editingPro.name : newPro.name}
+                  onChange={e => editingPro ? setEditingPro({ ...editingPro, name: e.target.value }) : setNewPro({ ...newPro, name: e.target.value })}
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-400 uppercase">Cargo / Especialidade</label>
-                <input 
+                <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.professionals.form.role')}</label>
+                <input
                   type="text" className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none"
-                  value={editingPro ? editingPro.role : newPro.role} 
-                  onChange={e => editingPro ? setEditingPro({...editingPro, role: e.target.value}) : setNewPro({...newPro, role: e.target.value})}
-                  placeholder="Ex: Hair Stylist"
+                  value={editingPro ? editingPro.role : newPro.role}
+                  onChange={e => editingPro ? setEditingPro({ ...editingPro, role: e.target.value }) : setNewPro({ ...newPro, role: e.target.value })}
+                  placeholder={t('admin.professionals.form.role_placeholder')}
                 />
               </div>
               <div className="md:col-span-2 space-y-1">
-                <label className="text-xs font-bold text-slate-400 uppercase">Biografia Curta</label>
-                <textarea 
+                <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.professionals.form.bio')}</label>
+                <textarea
                   className="w-full p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none h-24"
-                  value={editingPro ? editingPro.bio : newPro.bio} 
-                  onChange={e => editingPro ? setEditingPro({...editingPro, bio: e.target.value}) : setNewPro({...newPro, bio: e.target.value})}
+                  value={editingPro ? editingPro.bio : newPro.bio}
+                  onChange={e => editingPro ? setEditingPro({ ...editingPro, bio: e.target.value }) : setNewPro({ ...newPro, bio: e.target.value })}
                 />
               </div>
             </div>
@@ -162,7 +164,7 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
 
           <div className="space-y-3">
             <label className="text-xs font-bold text-slate-400 uppercase flex items-center">
-              <Scissors size={14} className="mr-2" /> Serviços Atendidos
+              <Scissors size={14} className="mr-2" /> {t('admin.professionals.form.services')}
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {services.map(s => {
@@ -171,11 +173,10 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
                   <button
                     key={s.id}
                     onClick={() => handleToggleService(s.id, !!editingPro)}
-                    className={`p-3 text-left rounded-xl border-2 text-sm transition ${
-                      isSelected 
-                      ? 'border-rose-500 bg-rose-50 text-rose-700' 
-                      : 'border-slate-100 text-slate-500 hover:border-slate-200'
-                    }`}
+                    className={`p-3 text-left rounded-xl border-2 text-sm transition ${isSelected
+                        ? 'border-rose-500 bg-rose-50 text-rose-700'
+                        : 'border-slate-100 text-slate-500 hover:border-slate-200'
+                      }`}
                   >
                     <p className="font-bold truncate">{s.name}</p>
                   </button>
@@ -185,18 +186,18 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
           </div>
 
           <div className="flex justify-end pt-4 space-x-3">
-             <button 
+            <button
               onClick={() => { setIsAdding(false); setEditingPro(null); }}
               className="px-8 py-4 rounded-2xl font-bold text-slate-500 hover:bg-slate-50 transition"
             >
-              Cancelar
+              {t('common.cancel')}
             </button>
-            <button 
+            <button
               onClick={editingPro ? handleSaveEdit : handleAdd}
               className="bg-slate-900 text-white font-bold px-12 py-4 rounded-2xl hover:bg-slate-800 transition shadow-xl flex items-center"
             >
-              <Save size={20} className="mr-2"/>
-              {editingPro ? 'Salvar Alterações' : 'Salvar Profissional'}
+              <Save size={20} className="mr-2" />
+              {editingPro ? t('admin.professionals.form.save_changes') : t('admin.professionals.form.save')}
             </button>
           </div>
         </div>
@@ -208,13 +209,13 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
             <div className="relative h-64 overflow-hidden">
               <img src={pro.avatar} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
               <div className="absolute top-4 right-4 flex space-x-2">
-                <button 
+                <button
                   onClick={() => { setEditingPro(pro); setIsAdding(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                   className="p-2.5 bg-white/90 backdrop-blur-sm text-slate-600 rounded-xl hover:bg-rose-500 hover:text-white transition shadow-lg"
                 >
                   <Edit2 size={18} />
                 </button>
-                <button 
+                <button
                   onClick={() => handleDelete(pro.id)}
                   className="p-2.5 bg-white/90 backdrop-blur-sm text-slate-600 rounded-xl hover:bg-red-500 hover:text-white transition shadow-lg"
                 >
@@ -228,9 +229,9 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
             </div>
             <div className="p-6 space-y-4 flex-1 flex flex-col">
               <p className="text-slate-500 text-sm line-clamp-3 leading-relaxed italic">
-                "{pro.bio || 'Sem biografia cadastrada.'}"
+                "{pro.bio || t('admin.professionals.bio.empty')}"
               </p>
-              
+
               <div className="pt-4 border-t border-slate-50 mt-auto">
                 <div className="flex flex-wrap gap-1">
                   {pro.services.slice(0, 3).map(sid => {
@@ -253,9 +254,9 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
         ))}
         {professionals.length === 0 && (
           <div className="col-span-full py-20 text-center bg-white rounded-3xl border-2 border-dashed border-slate-100">
-             <User size={48} className="mx-auto text-slate-200 mb-4" />
-             <h3 className="text-slate-800 font-bold text-xl">Nenhum profissional cadastrado</h3>
-             <p className="text-slate-400">Comece adicionando seu primeiro membro da equipe.</p>
+            <User size={48} className="mx-auto text-slate-200 mb-4" />
+            <h3 className="text-slate-800 font-bold text-xl">{t('admin.professionals.empty.title')}</h3>
+            <p className="text-slate-400">{t('admin.professionals.empty.sub')}</p>
           </div>
         )}
       </div>

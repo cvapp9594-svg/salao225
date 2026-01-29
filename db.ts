@@ -50,8 +50,9 @@ const DEFAULT_SETTINGS: SiteSettings = {
     'Sábado': '09:00 - 17:00',
     'Domingo': 'Fechado',
   },
-  primaryColor: 'rose-500',
-  accentColor: 'rose-100',
+  primaryColor: '#f43f5e',
+  accentColor: '#fff1f2',
+  footerDescription: 'Agende seu momento de cuidado com os melhores profissionais da região.',
 };
 
 export const db = {
@@ -154,8 +155,9 @@ export const db = {
       whatsappNumber: data.whatsapp_number,
       address: data.address,
       openingHours: data.opening_hours,
-      primaryColor: data.primary_color,
-      accentColor: data.accent_color,
+      primaryColor: data.primary_color || '#f43f5e',
+      accentColor: data.accent_color || '#fff1f2',
+      footerDescription: data.footer_description || '',
       adminPassword: data.admin_password || 'adminsalao'
     };
   },
@@ -179,6 +181,7 @@ export const db = {
       opening_hours: settings.openingHours,
       primary_color: settings.primaryColor,
       accent_color: settings.accentColor,
+      footer_description: settings.footerDescription,
       admin_password: settings.adminPassword
     });
   },

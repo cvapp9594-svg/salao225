@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Category } from '../types';
 import { Plus, Trash2, Tag, Edit2, Check, X } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AdminCategoriesProps {
   categories: Category[];
@@ -9,6 +10,7 @@ interface AdminCategoriesProps {
 }
 
 const AdminCategories: React.FC<AdminCategoriesProps> = ({ categories, onUpdate }) => {
+  const { t } = useLanguage();
   const [newName, setNewName] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
@@ -16,7 +18,7 @@ const AdminCategories: React.FC<AdminCategoriesProps> = ({ categories, onUpdate 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName.trim()) return;
-    
+
     const item: Category = {
       id: 'cat_' + Math.random().toString(36).substr(2, 5),
       name: newName.trim()
@@ -37,7 +39,7 @@ const AdminCategories: React.FC<AdminCategoriesProps> = ({ categories, onUpdate 
 
   const handleSaveEdit = (id: string) => {
     if (!editName.trim()) return;
-    const updated = categories.map(c => 
+    const updated = categories.map(c =>
       c.id === id ? { ...c, name: editName.trim() } : c
     );
     onUpdate(updated);
@@ -46,7 +48,7 @@ const AdminCategories: React.FC<AdminCategoriesProps> = ({ categories, onUpdate 
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Excluir esta categoria? Isso pode afetar a exibição de serviços vinculados.')) {
+    if (window.confirm(t('admin.categories.delete.confirm'))) {
       onUpdate(categories.filter(c => c.id !== id));
     }
   };
@@ -55,22 +57,22 @@ const AdminCategories: React.FC<AdminCategoriesProps> = ({ categories, onUpdate 
     <div className="space-y-8 animate-fade-in-up">
       <div>
         <h1 className="text-3xl font-serif font-bold text-slate-800 flex items-center">
-          <Tag className="mr-3 text-rose-500" size={32} /> Categorias
+          <Tag className="mr-3 text-rose-500" size={32} /> {t('admin.categories.title')}
         </h1>
-        <p className="text-slate-500">Organize seu catálogo de serviços por grupos.</p>
+        <p className="text-slate-500">{t('admin.categories.subtitle')}</p>
       </div>
 
       <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm max-w-xl">
         <form onSubmit={handleAdd} className="flex gap-3">
-          <input 
-            type="text" 
-            placeholder="Nova Categoria (ex: Coloração)" 
+          <input
+            type="text"
+            placeholder={t('admin.categories.input.placeholder')}
             className="flex-1 p-3 rounded-xl border border-slate-200 focus:border-rose-300 focus:outline-none transition bg-slate-50/30 font-medium"
             value={newName}
             onChange={e => setNewName(e.target.value)}
           />
           <button type="submit" className="bg-rose-500 text-white font-bold px-6 rounded-xl hover:bg-rose-600 transition flex items-center shadow-lg shadow-rose-100 whitespace-nowrap active:scale-95">
-            <Plus size={20} className="mr-1" /> Criar
+            <Plus size={20} className="mr-1" /> {t('admin.categories.btn.create')}
           </button>
         </form>
       </div>
@@ -80,9 +82,9 @@ const AdminCategories: React.FC<AdminCategoriesProps> = ({ categories, onUpdate 
           <div key={cat.id} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center group hover:border-rose-200 transition duration-300">
             {editingId === cat.id ? (
               <div className="flex-1 flex items-center gap-2 animate-fade-in-up">
-                <input 
+                <input
                   autoFocus
-                  type="text" 
+                  type="text"
                   className="flex-1 p-2 text-sm border-2 border-rose-300 rounded-lg focus:outline-none bg-rose-50/30 font-bold text-slate-700"
                   value={editName}
                   onChange={e => setEditName(e.target.value)}
@@ -91,13 +93,13 @@ const AdminCategories: React.FC<AdminCategoriesProps> = ({ categories, onUpdate 
                     if (e.key === 'Escape') cancelEditing();
                   }}
                 />
-                <button 
+                <button
                   onClick={() => handleSaveEdit(cat.id)}
                   className="p-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition shadow-md shadow-emerald-100"
                 >
                   <Check size={16} />
                 </button>
-                <button 
+                <button
                   onClick={cancelEditing}
                   className="p-2 bg-slate-100 text-slate-400 rounded-lg hover:bg-slate-200 transition"
                 >
@@ -113,14 +115,14 @@ const AdminCategories: React.FC<AdminCategoriesProps> = ({ categories, onUpdate 
                   <span className="font-bold text-slate-700">{cat.name}</span>
                 </div>
                 <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <button 
+                  <button
                     onClick={() => startEditing(cat)}
                     className="p-2.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition"
                     title="Editar Categoria"
                   >
                     <Edit2 size={18} />
                   </button>
-                  <button 
+                  <button
                     onClick={() => handleDelete(cat.id)}
                     className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition"
                     title="Excluir Categoria"
@@ -135,7 +137,7 @@ const AdminCategories: React.FC<AdminCategoriesProps> = ({ categories, onUpdate 
         {categories.length === 0 && (
           <div className="col-span-full py-16 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
             <Tag size={40} className="mx-auto text-slate-200 mb-4" />
-            <p className="text-slate-400 font-bold">Nenhuma categoria cadastrada ainda.</p>
+            <p className="text-slate-400 font-bold">{t('admin.categories.empty')}</p>
           </div>
         )}
       </div>

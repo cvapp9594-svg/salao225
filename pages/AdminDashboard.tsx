@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Appointment, Service, Professional } from '../types';
 import { Users, Calendar, TrendingUp, Scissors, Sparkles, Clock, Bell, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AdminDashboardProps {
   appointments: Appointment[];
@@ -10,6 +11,7 @@ interface AdminDashboardProps {
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services, professionals }) => {
+  const { t } = useLanguage();
   const pending = appointments.filter(a => a.status === 'pending').length;
 
   const tomorrow = new Date();
@@ -54,8 +56,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
     <div className="space-y-12 animate-fade-in-up">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-serif font-black text-slate-900 mb-2">Painel Executivo</h1>
-          <p className="text-slate-500 font-medium">Gestão centralizada e métricas de desempenho do estúdio.</p>
+          <h1 className="text-4xl font-serif font-black text-slate-900 mb-2">{t('admin.dashboard.title')}</h1>
+          <p className="text-slate-500 font-medium">{t('admin.dashboard.subtitle')}</p>
         </div>
         {pendingReminders > 0 && (
           <div className="glass px-6 py-4 rounded-3xl flex items-center text-rose-600 border border-rose-100 shadow-xl shadow-rose-500/5">
@@ -63,18 +65,18 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
               <Bell size={20} />
             </div>
             <div>
-              <span className="block text-xs font-black uppercase tracking-widest opacity-60">Ação Necessária</span>
-              <span className="text-sm font-bold">{pendingReminders} lembretes para amanhã!</span>
+              <span className="block text-xs font-black uppercase tracking-widest opacity-60">{t('admin.dashboard.action_needed')}</span>
+              <span className="text-sm font-bold">{pendingReminders} {t('admin.dashboard.reminders_tomorrow')}</span>
             </div>
           </div>
         )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <StatCard title="Agendamentos" value={appointments.length} icon={Calendar} color="bg-rose-500" trend="12" />
-        <StatCard title="Confirmações Pend." value={pending} icon={Clock} color="bg-amber-500" />
-        <StatCard title="Ações p/ Amanhã" value={pendingReminders} icon={Bell} color="bg-indigo-500" badge={pendingReminders > 0 ? "Foco Total" : ""} />
-        <StatCard title="Receita Prevista" value={`${totalRevenue}$00`} icon={TrendingUp} color="bg-emerald-500" trend="5.4" />
+        <StatCard title={t('admin.dashboard.stat.appointments')} value={appointments.length} icon={Calendar} color="bg-rose-500" trend="12" />
+        <StatCard title={t('admin.dashboard.stat.pending')} value={pending} icon={Clock} color="bg-amber-500" />
+        <StatCard title={t('admin.dashboard.stat.actions')} value={pendingReminders} icon={Bell} color="bg-indigo-500" badge={pendingReminders > 0 ? t('admin.dashboard.stat.focus') : ""} />
+        <StatCard title={t('admin.dashboard.stat.revenue')} value={`${totalRevenue}$00`} icon={TrendingUp} color="bg-emerald-500" trend="5.4" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -84,9 +86,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
               <div className="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mr-3">
                 <Sparkles size={20} />
               </div>
-              Menu de Elite
+              {t('admin.dashboard.menu.title')}
             </h3>
-            <button className="text-xs font-black text-rose-500 uppercase tracking-widest hover:opacity-70">Ver Tudo</button>
+            <button className="text-xs font-black text-rose-500 uppercase tracking-widest hover:opacity-70">{t('admin.dashboard.view_all')}</button>
           </div>
 
           <div className="space-y-6">
@@ -116,9 +118,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
               <div className="w-10 h-10 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center mr-3">
                 <Calendar size={20} />
               </div>
-              Atividade Mestra
+              {t('admin.dashboard.activity.title')}
             </h3>
-            <button className="text-xs font-black text-indigo-500 uppercase tracking-widest hover:opacity-70">Log Completo</button>
+            <button className="text-xs font-black text-indigo-500 uppercase tracking-widest hover:opacity-70">{t('admin.dashboard.log')}</button>
           </div>
 
           <div className="space-y-6">
@@ -146,7 +148,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
             {appointments.length === 0 && (
               <div className="text-center py-16 opacity-30">
                 <Clock size={48} className="mx-auto mb-4" />
-                <p className="font-black text-xs uppercase tracking-widest">Nenhuma atividade registrada</p>
+                <p className="font-black text-xs uppercase tracking-widest">{t('admin.dashboard.empty')}</p>
               </div>
             )}
           </div>
