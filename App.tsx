@@ -14,7 +14,8 @@ import AdminAppointments from './pages/AdminAppointments';
 import AdminReminders from './pages/AdminReminders';
 import AdminHistory from './pages/AdminHistory';
 import AdminCategories from './pages/AdminCategories';
-import { Menu, X, Settings, LayoutDashboard, Scissors, Users, Calendar, LogOut, ChevronRight, Bell, History, Tag, Home as HomeIcon, Globe, ArrowRight, Sparkles } from 'lucide-react';
+import AdminSales from './pages/AdminSales';
+import { Menu, X, Settings, LayoutDashboard, Scissors, Users, Calendar, LogOut, ChevronRight, Bell, History, Tag, Home as HomeIcon, Globe, ArrowRight, Sparkles, TrendingUp } from 'lucide-react';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
 const AppContent: React.FC = () => {
@@ -282,6 +283,7 @@ const AppContent: React.FC = () => {
 
             <AdminSidebarItem target="admin-dashboard" icon={LayoutDashboard} label={t('admin.sidebar.overview')} />
             <AdminSidebarItem target="admin-appointments" icon={Calendar} label={t('admin.sidebar.agenda')} />
+            <AdminSidebarItem target="admin-sales" icon={TrendingUp} label="Relatório de Vendas" />
             <AdminSidebarItem target="admin-history" icon={History} label={t('admin.sidebar.history')} />
             <AdminSidebarItem
               target="admin-reminders"
@@ -317,6 +319,7 @@ const AppContent: React.FC = () => {
               {view === 'admin-services' && <AdminServices services={services} categories={categories} onUpdate={handleUpdateServices} />}
               {view === 'admin-professionals' && <AdminProfessionals professionals={professionals} services={services} onUpdate={handleUpdateProfessionals} />}
               {view === 'admin-appointments' && <AdminAppointments appointments={appointments} services={services} professionals={professionals} onUpdate={handleUpdateAppointments} />}
+              {view === 'admin-sales' && <AdminSales appointments={appointments} services={services} professionals={professionals} />}
               {view === 'admin-settings' && <AdminSettings settings={settings} onUpdate={handleUpdateSettings} />}
               {view === 'admin-reminders' && <AdminReminders appointments={appointments} services={services} settings={settings} onUpdate={handleUpdateAppointments} />}
               {view === 'admin-history' && <AdminHistory appointments={appointments} services={services} professionals={professionals} onUpdate={handleUpdateAppointments} />}

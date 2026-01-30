@@ -32,7 +32,7 @@ export interface Appointment {
   professionalId: string;
   date: string; // ISO string (YYYY-MM-DD)
   time: string; // "HH:mm"
-  status: 'pending' | 'confirmed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
   reminderSent?: boolean;
   createdAt: string;
 }
@@ -71,4 +71,4 @@ export interface SiteSettings {
   adminPassword?: string;
 }
 
-export type View = 'home' | 'booking' | 'admin-login' | 'admin-dashboard' | 'admin-services' | 'admin-professionals' | 'admin-appointments' | 'admin-settings' | 'admin-reminders' | 'admin-history' | 'admin-categories';
+export type View = 'home' | 'booking' | 'admin-login' | 'admin-dashboard' | 'admin-services' | 'admin-professionals' | 'admin-appointments' | 'admin-settings' | 'admin-reminders' | 'admin-history' | 'admin-categories' | 'admin-sales';
