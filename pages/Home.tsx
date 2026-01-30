@@ -14,6 +14,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNow }) => {
   const { t, language } = useLanguage();
+  const [addedItemId, setAddedItemId] = React.useState<string | null>(null);
   // ... (cutting content for prompt efficiency as I know lines 28+)
   // Safety check for loading state
   if (!settings) {
@@ -172,11 +173,20 @@ const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNo
                 <div className="flex items-center justify-between pt-6 border-t border-slate-50 mt-auto">
                   <span className="text-2xl font-black text-slate-900">{service.price}$00</span>
                   <button
-                    onClick={() => onBookNow(service.id)}
-                    className="flex items-center space-x-2 text-rose-500 font-black text-[10px] uppercase tracking-widest hover:text-rose-600 transition group/btn"
+                    onClick={() => {
+                      onBookNow(service.id);
+                      setAddedItemId(service.id);
+                      setTimeout(() => setAddedItemId(null), 2000);
+                    }}
+                    className={`flex items-center space-x-2 font-black text-[10px] uppercase tracking-widest transition-all duration-300 group/btn ${addedItemId === service.id ? 'text-emerald-500 scale-110' : 'text-rose-500 hover:text-rose-600'
+                      }`}
                   >
-                    <span>{t('nav.book')}</span>
-                    <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                    <span>{addedItemId === service.id ? 'Adicionado' : t('nav.book')}</span>
+                    {addedItemId === service.id ? (
+                      <Heart size={14} className="fill-emerald-500" />
+                    ) : (
+                      <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                    )}
                   </button>
                 </div>
               </div>

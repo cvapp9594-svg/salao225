@@ -108,7 +108,7 @@ const AppContent: React.FC = () => {
       setView('admin-login');
     } else {
       setView(v);
-      if (v === 'booking' && serviceId) {
+      if (serviceId) {
         setPreSelectedServiceIds(prev => prev.includes(serviceId) ? prev : [...prev, serviceId]);
       }
     }
@@ -255,12 +255,16 @@ const AppContent: React.FC = () => {
             )}
           </nav>
 
-          <main className={`flex-1 ${view !== 'home' ? 'pt-24' : ''}`}>
-            <Home settings={settings} services={services} professionals={professionals} onBookNow={(id) => navigate('booking', id)} />
+          <main className={`flex-1 ${view !== 'home' ? 'pt-24' : ''} relative`}>
+            <div className={view === 'home' ? 'block' : 'hidden'}>
+              <Home settings={settings} services={services} professionals={professionals} onBookNow={(id) => navigate('booking', id)} />
+            </div>
             <div className={view === 'booking' ? 'block' : 'hidden'}>
               <Booking settings={settings} services={services} professionals={professionals} onComplete={handleUpdateAppointments} preSelectedServiceIds={preSelectedServiceIds} />
             </div>
-            {view === 'admin-login' && <AdminLogin onLogin={() => { db.setAdminAuthenticated(true); setIsAdminLoggedIn(true); }} />}
+            <div className={view === 'admin-login' ? 'block' : 'hidden'}>
+              <AdminLogin onLogin={() => { db.setAdminAuthenticated(true); setIsAdminLoggedIn(true); }} />
+            </div>
           </main>
         </>
       ) : (
