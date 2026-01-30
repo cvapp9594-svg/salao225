@@ -230,6 +230,50 @@ export const db = {
       admin_password: settings.adminPassword
     });
   },
+  // Auth methods using Supabase Auth
+  signIn: async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) throw error;
+
+    // Check if user is in admin_users table
+    if (data.user) {
+      const { data: adminData, error: adminError } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('id', data.user.id)
+        .single();
+
+      if (adminError || !adminData) {
+        await supabase.auth.signOut();
+        throw new Error('User is not an admin');
+      }
+    }
+
+    return data;
+  },
+  signOut: async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+  },
+  getSession: async () => {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
+    return data.session;
+  },
+  checkIsAdmin: async (userId: string): Promise<boolean> => {
+    const { data, error } = await supabase
+      .from('admin_users')
+      .select('id')
+      .eq('id', userId)
+      .single();
+
+    return !error && !!data;
+  },
+  // Legacy methods for backward compatibility (deprecated)
   isAdminAuthenticated: (): boolean => {
     return localStorage.getItem(STORAGE_KEYS.ADMIN_AUTH) === 'true';
   },
