@@ -162,8 +162,8 @@ const AdminAppointments: React.FC<AdminAppointmentsProps> = ({ appointments, ser
                           <div
                             key={app.id}
                             className={`text-[10px] p-1 rounded truncate border ${app.status === 'confirmed' ? 'bg-green-50 border-green-100 text-green-700' :
-                                app.status === 'cancelled' ? 'bg-red-50 border-red-100 text-red-700' :
-                                  'bg-amber-50 border-amber-100 text-amber-700'
+                              app.status === 'cancelled' ? 'bg-red-50 border-red-100 text-red-700' :
+                                'bg-amber-50 border-amber-100 text-amber-700'
                               }`}
                           >
                             <span className="font-bold">{app.time}</span> {app.clientName}
@@ -212,28 +212,39 @@ const AdminAppointments: React.FC<AdminAppointmentsProps> = ({ appointments, ser
                     </td>
                     <td className="px-6 py-6">
                       <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${app.status === 'confirmed' ? 'bg-green-100 text-green-600' :
-                          app.status === 'cancelled' ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600'
+                        app.status === 'cancelled' ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600'
                         }`}>
                         {app.status}
                       </span>
                     </td>
                     <td className="px-6 py-6">
                       <div className="flex space-x-2">
-                        {app.status !== 'confirmed' && (
-                          <button
-                            onClick={() => updateStatus(app.id, 'confirmed')}
-                            className="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-500 hover:text-white transition shadow-sm"
-                          >
-                            <Check size={18} />
-                          </button>
-                        )}
-                        {app.status !== 'cancelled' && (
-                          <button
-                            onClick={() => updateStatus(app.id, 'cancelled')}
-                            className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-500 hover:text-white transition shadow-sm"
-                          >
-                            <X size={18} />
-                          </button>
+                        {app.status !== 'completed' ? (
+                          <>
+                            <button
+                              onClick={() => updateStatus(app.id, 'completed')}
+                              className="flex items-center space-x-2 px-4 py-2 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition shadow-lg shadow-emerald-200"
+                              title="Confirmar e Enviar para Relatório de Vendas"
+                            >
+                              <Check size={18} className="stroke-[3px]" />
+                              <span className="text-xs font-black uppercase tracking-wider">Confirmar e Vender</span>
+                            </button>
+
+                            {app.status !== 'cancelled' && (
+                              <button
+                                onClick={() => updateStatus(app.id, 'cancelled')}
+                                className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition shadow-sm border border-red-100"
+                                title="Cancelar"
+                              >
+                                <X size={18} />
+                              </button>
+                            )}
+                          </>
+                        ) : (
+                          <div className="flex items-center space-x-2 px-4 py-2 bg-slate-100 text-slate-400 rounded-xl cursor-default border border-slate-200">
+                            <Check size={16} />
+                            <span className="text-[10px] font-black uppercase tracking-widest leading-none">Venda Registrada</span>
+                          </div>
                         )}
                       </div>
                     </td>

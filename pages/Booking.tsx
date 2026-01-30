@@ -60,7 +60,7 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
 
   const totalPrice = selectedServices.reduce((acc, s) => acc + (s.price || 0), 0);
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (selectedServices.length === 0 || !clientName || !clientPhone) return;
 
     // Create a generic record for each service
@@ -100,13 +100,25 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
     message += `\n💰 Total: ${totalPrice}$00`;
 
     const encodedMsg = encodeURIComponent(message);
-    const cleanNumber = settings.whatsappNumber.replace(/\D/g, '');
 
-    // Open WhatsApp BEFORE async operations to avoid popup blockers
-    window.open(`https://wa.me/${cleanNumber}?text=${encodedMsg}`, '_blank');
+    // Improved number cleaning: remove everything except digits, then remove leading zeros
+    let cleanNumber = settings.whatsappNumber.replace(/\D/g, '');
+    if (cleanNumber.startsWith('00')) {
+      cleanNumber = cleanNumber.substring(2);
+    } else if (cleanNumber.startsWith('0')) {
+      cleanNumber = cleanNumber.substring(1);
+    }
 
-    onComplete(updated);
+    // Create the link (using api.whatsapp.com for maximum compatibility)
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodedMsg}`;
+
+    // Update state and SAVE to database first
     setStep(3);
+    await onComplete(updated);
+
+    // Navegação direta - mais "normal" e confiável em celulares e webviews
+    // Isso evita bloqueios de pop-up e erros de "link não pôde ser aberto"
+    window.location.href = whatsappUrl;
   };
 
   return (
@@ -290,8 +302,8 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
                         type="button"
                         onClick={() => setSelectedTime(t)}
                         className={`py-2 px-1 rounded-lg text-xs font-black transition-all ${selectedTime === t
-                            ? 'bg-rose-500 text-white shadow-lg shadow-rose-200 scale-105'
-                            : 'bg-white text-slate-600 hover:border-rose-300 border border-transparent'
+                          ? 'bg-rose-500 text-white shadow-lg shadow-rose-200 scale-105'
+                          : 'bg-white text-slate-600 hover:border-rose-300 border border-transparent'
                           }`}
                       >
                         {t}

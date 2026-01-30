@@ -20,7 +20,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
   const pendingReminders = appointments.filter(a => a.date === tomorrowStr && !a.reminderSent && a.status === 'confirmed').length;
 
   const totalRevenue = appointments
-    .filter(a => a.status === 'confirmed')
+    .filter(a => a.status === 'completed')
     .reduce((acc, curr) => {
       const s = services.find(srv => srv.id === curr.serviceId);
       return acc + (s?.price || 0);
@@ -137,10 +137,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ appointments, services,
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{srv?.name} • {a.time}</p>
                     </div>
                   </div>
-                  <span className={`px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] border shadow-sm ${a.status === 'confirmed' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' :
-                    a.status === 'cancelled' ? 'bg-rose-50 border-rose-100 text-rose-600' : 'bg-amber-50 border-amber-100 text-amber-600'
+                  <span className={`px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] border shadow-sm ${a.status === 'completed' ? 'bg-emerald-500 text-white border-emerald-600' :
+                      a.status === 'confirmed' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' :
+                        a.status === 'cancelled' ? 'bg-rose-50 border-rose-100 text-rose-600' :
+                          'bg-amber-50 border-amber-100 text-amber-600'
                     }`}>
-                    {a.status}
+                    {a.status === 'completed' ? 'Vendido' : a.status}
                   </span>
                 </div>
               );

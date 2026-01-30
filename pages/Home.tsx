@@ -336,7 +336,14 @@ const Home: React.FC<HomeProps> = ({ settings, services, professionals, onBookNo
               <div>
                 <h5 className="font-black text-white mb-8 text-[10px] uppercase tracking-[0.3em] opacity-40">{t('home.footer.contact')}</h5>
                 <p className="text-slate-400 mb-6 leading-relaxed font-medium">{settings.address}</p>
-                <p className="text-rose-400 font-black text-xl tracking-tight">{settings.whatsappNumber}</p>
+                <a
+                  href={`https://api.whatsapp.com/send?phone=${settings.whatsappNumber.replace(/\D/g, '').replace(/^0+/, '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-rose-400 font-black text-xl tracking-tight hover:text-rose-300 transition"
+                >
+                  {settings.whatsappNumber}
+                </a>
               </div>
             </div>
           </div>

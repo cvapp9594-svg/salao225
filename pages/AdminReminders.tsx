@@ -29,8 +29,15 @@ const AdminReminders: React.FC<AdminRemindersProps> = ({ appointments, services,
       .replace('{service}', srv?.name || 'Beleza')
       .replace('{salon}', settings.salonName);
 
+    let clientPhone = app.clientPhone.replace(/\D/g, '');
+    if (clientPhone.startsWith('00')) {
+      clientPhone = clientPhone.substring(2);
+    } else if (clientPhone.startsWith('0')) {
+      clientPhone = clientPhone.substring(1);
+    }
+
     const encodedMsg = encodeURIComponent(message);
-    window.open(`https://wa.me/${app.clientPhone.replace(/\D/g, '')}?text=${encodedMsg}`, '_blank');
+    window.open(`https://wa.me/${clientPhone}?text=${encodedMsg}`, '_blank');
 
     // Marcar como lembrete enviado
     const updated = appointments.map(a => a.id === app.id ? { ...a, reminderSent: true } : a);
@@ -73,8 +80,8 @@ const AdminReminders: React.FC<AdminRemindersProps> = ({ appointments, services,
                   <button
                     onClick={() => sendReminder(app)}
                     className={`flex-1 md:flex-none flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-bold transition-all shadow-lg ${app.reminderSent
-                        ? 'bg-slate-100 text-slate-600 hover:bg-slate-200 shadow-slate-100'
-                        : 'bg-green-500 text-white hover:bg-green-600 shadow-green-200'
+                      ? 'bg-slate-100 text-slate-600 hover:bg-slate-200 shadow-slate-100'
+                      : 'bg-green-500 text-white hover:bg-green-600 shadow-green-200'
                       }`}
                   >
                     <MessageSquare size={18} />

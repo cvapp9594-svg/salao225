@@ -42,7 +42,8 @@ const AdminSales: React.FC<AdminSalesProps> = ({ appointments, services, profess
             if (aptYear !== selectedYear) return false;
             if (selectedMonth && aptMonth !== selectedMonth) return false;
 
-            return apt.status === 'confirmed' || apt.status === 'completed';
+            // Apenas agendamentos CONCLUÍDOS entram no relatório de vendas
+            return apt.status === 'completed';
         });
     }, [appointments, selectedYear, selectedMonth]);
 
@@ -56,7 +57,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ appointments, services, profess
 
         appointments.forEach(apt => {
             if (apt.date === 'A definir' || !apt.date) return;
-            if (apt.status !== 'confirmed' && apt.status !== 'completed') return;
+            if (apt.status !== 'completed') return;
 
             const aptDate = new Date(apt.date);
             const aptYear = aptDate.getFullYear();

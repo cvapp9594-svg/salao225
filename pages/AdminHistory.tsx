@@ -44,6 +44,7 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'confirmed': return 'bg-green-100 text-green-700 border-green-200';
+      case 'completed': return 'bg-emerald-500 text-white border-emerald-600 shadow-sm';
       case 'cancelled': return 'bg-red-100 text-red-700 border-red-200';
       case 'pending': return 'bg-amber-100 text-amber-700 border-amber-200';
       default: return 'bg-slate-100 text-slate-700 border-slate-200';
@@ -53,6 +54,7 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'confirmed': return <CheckCircle size={14} className="mr-1" />;
+      case 'completed': return <CheckCircle size={14} className="mr-1" />;
       case 'cancelled': return <XCircle size={14} className="mr-1" />;
       case 'pending': return <HelpCircle size={14} className="mr-1" />;
       default: return null;
@@ -62,6 +64,7 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
   const getStatusLabel = (status: string) => {
     switch (status) {
       case 'confirmed': return t('admin.history.filter.confirmed');
+      case 'completed': return 'Venda Concluída';
       case 'pending': return t('admin.history.filter.pending');
       case 'cancelled': return t('admin.history.filter.cancelled');
       default: return status;
@@ -173,13 +176,36 @@ const AdminHistory: React.FC<AdminHistoryProps> = ({ appointments, services, pro
                     </span>
                   </td>
                   <td className="px-6 py-5 text-center">
-                    <button
-                      onClick={() => handleDelete(app.id)}
-                      className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                      title="Excluir Registro"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                    <div className="flex items-center justify-center space-x-2">
+                      {app.status !== 'completed' ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              const updated = appointments.map(a => a.id === app.id ? { ...a, status: 'completed' } : a);
+                              onUpdate(updated);
+                            }}
+                            className="flex items-center space-x-2 px-3 py-1.5 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition shadow-md shadow-emerald-100"
+                            title="Confirmar e Enviar para Relatório de Vendas"
+                          >
+                            <CheckCircle size={14} />
+                            <span className="text-[10px] font-black uppercase tracking-wider">Vender</span>
+                          </button>
+
+                          <button
+                            onClick={() => handleDelete(app.id)}
+                            className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                            title="Excluir Registro"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </>
+                      ) : (
+                        <div className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 text-slate-400 rounded-lg border border-slate-200 cursor-default">
+                          <CheckCircle size={14} />
+                          <span className="text-[10px] font-black uppercase tracking-widest">Vendido</span>
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );

@@ -115,7 +115,9 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onUpdate }) => 
                   placeholder="Ex: 2389999999"
                 />
               </div>
-              <p className="text-[10px] text-slate-400 mt-1">Este número será usado para todos os agendamentos via WhatsApp.</p>
+              <p className="text-[10px] text-slate-400 mt-1">
+                Use o formato internacional (Ex: 238 para Cabo Verde + número). Não use "00" ou "+".
+              </p>
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.settings.info.address')}</label>
