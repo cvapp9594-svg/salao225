@@ -20,7 +20,8 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
     role: '',
     avatar: 'https://i.pravatar.cc/150?u=placeholder',
     bio: '',
-    services: []
+    services: [],
+    isActive: true
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -66,10 +67,11 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
       role: newPro.role!,
       avatar: newPro.avatar || 'https://i.pravatar.cc/150?u=placeholder',
       bio: newPro.bio || '',
-      services: newPro.services || []
+      services: newPro.services || [],
+      isActive: newPro.isActive !== false
     };
     onUpdate([...professionals, item]);
-    setNewPro({ name: '', role: '', avatar: 'https://i.pravatar.cc/150?u=placeholder', bio: '', services: [] });
+    setNewPro({ name: '', role: '', avatar: 'https://i.pravatar.cc/150?u=placeholder', bio: '', services: [], isActive: true });
     setIsAdding(false);
   };
 
@@ -151,6 +153,20 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
                   placeholder={t('admin.professionals.form.role_placeholder')}
                 />
               </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-400 uppercase">Status de Disponibilidade</label>
+                <button
+                  type="button"
+                  onClick={() => editingPro ? setEditingPro({ ...editingPro, isActive: !editingPro.isActive }) : setNewPro({ ...newPro, isActive: !newPro.isActive })}
+                  className={`w-full p-3 rounded-xl border-2 transition-all font-bold flex items-center justify-center space-x-2 ${(editingPro ? editingPro.isActive : newPro.isActive) !== false
+                      ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                      : 'border-slate-200 bg-slate-50 text-slate-400'
+                    }`}
+                >
+                  {(editingPro ? editingPro.isActive : newPro.isActive) !== false ? <Check size={18} /> : <X size={18} />}
+                  <span>{(editingPro ? editingPro.isActive : newPro.isActive) !== false ? 'Presente / Disponível' : 'Ausente / Indisponível'}</span>
+                </button>
+              </div>
               <div className="md:col-span-2 space-y-1">
                 <label className="text-xs font-bold text-slate-400 uppercase">{t('admin.professionals.form.bio')}</label>
                 <textarea
@@ -174,8 +190,8 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
                     key={s.id}
                     onClick={() => handleToggleService(s.id, !!editingPro)}
                     className={`p-3 text-left rounded-xl border-2 text-sm transition ${isSelected
-                        ? 'border-rose-500 bg-rose-50 text-rose-700'
-                        : 'border-slate-100 text-slate-500 hover:border-slate-200'
+                      ? 'border-rose-500 bg-rose-50 text-rose-700'
+                      : 'border-slate-100 text-slate-500 hover:border-slate-200'
                       }`}
                   >
                     <p className="font-bold truncate">{s.name}</p>
@@ -225,6 +241,12 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
               <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent text-white">
                 <h3 className="text-xl font-bold">{pro.name}</h3>
                 <p className="text-rose-300 text-sm font-medium">{pro.role}</p>
+                <div className="flex items-center space-x-2 mt-2">
+                  <div className={`w-2 h-2 rounded-full ${pro.isActive !== false ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'}`}></div>
+                  <span className="text-[10px] font-black uppercase tracking-widest">
+                    {pro.isActive !== false ? 'Disponível' : 'Ausente'}
+                  </span>
+                </div>
               </div>
             </div>
             <div className="p-6 space-y-4 flex-1 flex flex-col">
@@ -234,7 +256,7 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
 
               <div className="pt-4 border-t border-slate-50 mt-auto">
                 <div className="flex flex-wrap gap-1">
-                  {pro.services.slice(0, 3).map(sid => {
+                  {(pro.services || []).slice(0, 3).map(sid => {
                     const s = services.find(srv => srv.id === sid);
                     return s ? (
                       <span key={sid} className="text-[10px] bg-slate-50 text-slate-500 px-2 py-1 rounded-md border border-slate-100">
@@ -242,9 +264,9 @@ const AdminProfessionals: React.FC<AdminProfessionalsProps> = ({ professionals, 
                       </span>
                     ) : null;
                   })}
-                  {pro.services.length > 3 && (
+                  {(pro.services || []).length > 3 && (
                     <span className="text-[10px] bg-rose-50 text-rose-500 px-2 py-1 rounded-md border border-rose-100 font-bold">
-                      +{pro.services.length - 3}
+                      +{(pro.services || []).length - 3}
                     </span>
                   )}
                 </div>

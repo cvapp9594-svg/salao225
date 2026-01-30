@@ -40,8 +40,9 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
 
   const availableProfessionals = useMemo(() => {
     if (selectedServices.length === 0) return [];
-    // Only show professionals that can handle AT LEAST ONE of the selected services
+    // Only show professionals that are ACTIVE and can handle AT LEAST ONE of the selected services
     return professionals.filter(p => {
+      if (p.isActive === false) return false;
       const proServices = p.services || [];
       return selectedServices.some(s => proServices.includes(s.id));
     });

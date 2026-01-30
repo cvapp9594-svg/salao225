@@ -21,6 +21,7 @@ export interface Professional {
   avatar: string;
   bio: string;
   services: string[]; // array of service IDs
+  isActive?: boolean;
 }
 
 export interface Appointment {

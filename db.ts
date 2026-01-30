@@ -25,9 +25,9 @@ const DEFAULT_SERVICES: Service[] = [
 ];
 
 const DEFAULT_PROFESSIONALS: Professional[] = [
-  { id: 'pro1', name: 'Ana Silva', role: 'Hair Stylist', avatar: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&q=80&w=400', bio: 'Especialista em cortes modernos e coloração.', services: ['srv1', 'srv4'] },
-  { id: 'pro2', name: 'Julia Costa', role: 'Nail Designer', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400', bio: 'Apaixonada por unhas perfeitas e arte.', services: ['srv2'] },
-  { id: 'pro3', name: 'Mariana Santos', role: 'Makeup Artist', avatar: 'https://images.unsplash.com/photo-1588731238444-43836afd7963?auto=format&fit=crop&q=80&w=400', bio: 'Realçando sua beleza natural para qualquer ocasião.', services: ['srv3'] },
+  { id: 'pro1', name: 'Ana Silva', role: 'Hair Stylist', avatar: 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&q=80&w=400', bio: 'Especialista em cortes modernos e coloração.', services: ['srv1', 'srv4'], isActive: true },
+  { id: 'pro2', name: 'Julia Costa', role: 'Nail Designer', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400', bio: 'Apaixonada por unhas perfeitas e arte.', services: ['srv2'], isActive: true },
+  { id: 'pro3', name: 'Mariana Santos', role: 'Makeup Artist', avatar: 'https://images.unsplash.com/photo-1588731238444-43836afd7963?auto=format&fit=crop&q=80&w=400', bio: 'Realçando sua beleza natural para qualquer ocasião.', services: ['srv3'], isActive: true },
 ];
 
 const DEFAULT_SETTINGS: SiteSettings = {
@@ -106,11 +106,27 @@ export const db = {
   getProfessionals: async (): Promise<Professional[]> => {
     const { data, error } = await supabase.from('professionals').select('*').order('name');
     if (error || !data || data.length === 0) return DEFAULT_PROFESSIONALS;
-    return data;
+    return data.map(p => ({
+      id: p.id,
+      name: p.name,
+      role: p.role,
+      avatar: p.avatar,
+      bio: p.bio,
+      services: p.services,
+      isActive: p.is_active
+    }));
   },
   saveProfessionals: async (professionals: Professional[]) => {
     for (const p of professionals) {
-      await supabase.from('professionals').upsert(p);
+      await supabase.from('professionals').upsert({
+        id: p.id,
+        name: p.name,
+        role: p.role,
+        avatar: p.avatar,
+        bio: p.bio,
+        services: p.services,
+        is_active: p.isActive !== false // Default to true if undefined
+      });
     }
   },
   getAppointments: async (): Promise<Appointment[]> => {
