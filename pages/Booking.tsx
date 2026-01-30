@@ -41,8 +41,10 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
   const availableProfessionals = useMemo(() => {
     if (selectedServices.length === 0) return [];
     // Only show professionals that can handle AT LEAST ONE of the selected services
-    // or we could be stricter and say they must handle ALL. Let's go with at least one for flexibility.
-    return professionals.filter(p => selectedServices.some(s => p.services.includes(s.id)));
+    return professionals.filter(p => {
+      const proServices = p.services || [];
+      return selectedServices.some(s => proServices.includes(s.id));
+    });
   }, [selectedServices, professionals]);
 
   const timeSlots = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
@@ -94,13 +96,18 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
 
     message += `\n🛒 Itens:\n`;
     selectedServices.forEach(s => {
-      message += `- ${s.name} x1 ($${s.price})\n`;
+      message += `- ${s.name} x1 (${s.price}$00)\n`;
     });
 
-    message += `\n💰 Total: $${totalPrice}`;
+    message += `\n💰 Total: ${totalPrice}$00`;
 
     const encodedMsg = encodeURIComponent(message);
-    window.open(`https://wa.me/${settings.whatsappNumber}?text=${encodedMsg}`, '_blank');
+    const cleanNumber = settings.whatsappNumber.replace(/\D/g, '');
+
+    // Open WhatsApp BEFORE async operations to avoid popup blockers
+    window.open(`https://wa.me/${cleanNumber}?text=${encodedMsg}`, '_blank');
+
+    onComplete(updated);
     setStep(3);
   };
 
