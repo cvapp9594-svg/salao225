@@ -25,27 +25,11 @@ const AppContent: React.FC = () => {
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(db.isAdminAuthenticated());
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [preSelectedServiceIds, setPreSelectedServiceIds] = useState<string[]>([]);
-
-  // Check auth session on mount
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const session = await db.getSession();
-        if (session?.user) {
-          const isAdmin = await db.checkIsAdmin(session.user.id);
-          setIsAdminLoggedIn(isAdmin);
-        }
-      } catch (err) {
-        console.error('Session check failed:', err);
-      }
-    };
-    checkSession();
-  }, []);
 
   useEffect(() => {
     const loadData = async () => {
@@ -132,14 +116,10 @@ const AppContent: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const logout = async () => {
-    try {
-      await db.signOut();
-      setIsAdminLoggedIn(false);
-      navigate('home');
-    } catch (err) {
-      console.error('Logout failed:', err);
-    }
+  const logout = () => {
+    db.setAdminAuthenticated(false);
+    setIsAdminLoggedIn(false);
+    navigate('home');
   };
 
   if (isLoading || !settings) {
@@ -282,9 +262,9 @@ const AppContent: React.FC = () => {
             <div className={view === 'booking' ? 'block' : 'hidden'}>
               <Booking settings={settings} services={services} professionals={professionals} onComplete={handleUpdateAppointments} preSelectedServiceIds={preSelectedServiceIds} />
             </div>
-            {view === 'admin-login' && (
-              <AdminLogin onLogin={() => setIsAdminLoggedIn(true)} />
-            )}
+            <div className={view === 'admin-login' ? 'block' : 'hidden'}>
+              <AdminLogin onLogin={() => { db.setAdminAuthenticated(true); setIsAdminLoggedIn(true); }} />
+            </div>
           </main>
         </>
       ) : (

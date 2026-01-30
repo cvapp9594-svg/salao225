@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
-import { Lock, Mail } from 'lucide-react';
-import { db } from '../db';
+import { Lock, User } from 'lucide-react';
 
 interface AdminLoginProps {
   onLogin: () => void;
@@ -11,8 +10,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
   const { t } = useLanguage();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [user, setUser] = useState('');
+  const [pass, setPass] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,17 +21,23 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     setError('');
 
     try {
-      await db.signIn(email.trim(), password);
-      onLogin();
-    } catch (err: any) {
-      console.error('Login error:', err);
-      if (err.message === 'User is not an admin') {
-        setError('Este usuário não tem permissões de administrador.');
-      } else if (err.message?.includes('Invalid login credentials')) {
-        setError('Email ou senha incorretos.');
+      // Fetch settings/password from DB
+      const settings = await import('../db').then(m => m.db.getSettings());
+      const cleanUser = user.trim().toLowerCase();
+      const cleanPass = pass.trim();
+
+      const isValidUser = cleanUser === 'admin caboverde' || cleanUser === 'admincaboverde';
+      const adminPass = settings.adminPassword || 'adminsalao';
+
+      if (isValidUser && cleanPass === adminPass) {
+        onLogin();
       } else {
-        setError('Erro ao fazer login. Tente novamente.');
+        setError('Usuário ou senha incorretos. Verifique suas credenciais.');
+        setIsLoading(false);
       }
+    } catch (err) {
+      console.error(err);
+      setError('Erro ao conectar com o servidor.');
       setIsLoading(false);
     }
   };
@@ -50,17 +55,16 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-1">
-            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
+            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">{t('admin.login.user')}</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                required
+                type="text"
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
+                autoComplete="username"
                 className="w-full pl-12 p-4 rounded-xl border-2 border-slate-100 focus:border-rose-300 focus:outline-none transition bg-slate-50/30"
-                placeholder="admin@salao.com"
+                placeholder="Ex: admincaboverde"
               />
             </div>
           </div>
@@ -70,10 +74,9 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
                 autoComplete="current-password"
-                required
                 className="w-full pl-12 p-4 rounded-xl border-2 border-slate-100 focus:border-rose-300 focus:outline-none transition bg-slate-50/30"
                 placeholder="••••••••"
               />
@@ -100,7 +103,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
           </button>
 
           <div className="pt-4 text-center">
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Acesso via Supabase Auth</p>
+            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">Acesso restrito a administradores</p>
           </div>
         </form>
       </div>
