@@ -14,7 +14,7 @@ import AdminAppointments from './pages/AdminAppointments';
 import AdminReminders from './pages/AdminReminders';
 import AdminHistory from './pages/AdminHistory';
 import AdminCategories from './pages/AdminCategories';
-import { Menu, X, Settings, LayoutDashboard, Scissors, Users, Calendar, LogOut, ChevronRight, Bell, History, Tag, Home as HomeIcon, Globe } from 'lucide-react';
+import { Menu, X, Settings, LayoutDashboard, Scissors, Users, Calendar, LogOut, ChevronRight, Bell, History, Tag, Home as HomeIcon, Globe, ArrowRight, Sparkles } from 'lucide-react';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
 const AppContent: React.FC = () => {
@@ -63,15 +63,11 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Update theme colors when settings change
   useEffect(() => {
     if (settings) {
       const root = document.documentElement;
       root.style.setProperty('--brand-primary', settings.primaryColor);
       root.style.setProperty('--brand-soft', settings.accentColor);
-
-      // Simple darkening for hover: we'll just use the primary color if it's already a hex
-      // For now, let's just use the same color or append a slight shift if it's hex
       root.style.setProperty('--brand-primary-dark', settings.primaryColor);
     }
   }, [settings]);
@@ -114,8 +110,6 @@ const AppContent: React.FC = () => {
       setView(v);
       if (v === 'booking' && serviceId) {
         setPreSelectedServiceIds(prev => prev.includes(serviceId) ? prev : [...prev, serviceId]);
-      } else if (v === 'booking') {
-        setPreSelectedServiceIds([]);
       }
     }
     setIsMobileMenuOpen(false);
@@ -162,7 +156,7 @@ const AppContent: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans relative">
       {!isAdminView ? (
         <>
           <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${isScrolled
@@ -262,16 +256,15 @@ const AppContent: React.FC = () => {
           </nav>
 
           <main className={`flex-1 ${view !== 'home' ? 'pt-24' : ''}`}>
-            <div className="">
-              {view === 'home' && <Home settings={settings} services={services} professionals={professionals} onBookNow={(id) => navigate('booking', id)} />}
-              {view === 'booking' && <Booking settings={settings} services={services} professionals={professionals} onComplete={handleUpdateAppointments} preSelectedServiceIds={preSelectedServiceIds} />}
-              {view === 'admin-login' && <AdminLogin onLogin={() => { db.setAdminAuthenticated(true); setIsAdminLoggedIn(true); }} />}
+            <Home settings={settings} services={services} professionals={professionals} onBookNow={(id) => navigate('booking', id)} />
+            <div className={view === 'booking' ? 'block' : 'hidden'}>
+              <Booking settings={settings} services={services} professionals={professionals} onComplete={handleUpdateAppointments} preSelectedServiceIds={preSelectedServiceIds} />
             </div>
+            {view === 'admin-login' && <AdminLogin onLogin={() => { db.setAdminAuthenticated(true); setIsAdminLoggedIn(true); }} />}
           </main>
         </>
       ) : (
         <div className="flex flex-col lg:flex-row min-h-screen">
-          {/* Admin Sidebar */}
           <aside className="hidden lg:flex w-72 flex-col bg-white border-r border-slate-100 p-8 space-y-2 overflow-y-auto h-screen sticky top-0 shadow-[20px_0_50px_rgba(0,0,0,0.02)]">
             <div className="mb-12 flex items-center space-x-3">
               <div className="w-12 h-12 bg-rose-500 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-rose-500/20">
@@ -313,7 +306,6 @@ const AppContent: React.FC = () => {
             </div>
           </aside>
 
-          {/* Main Admin Content */}
           <main className="flex-1 lg:bg-[#fafafa] min-h-screen overflow-x-hidden">
             <div className="max-w-7xl mx-auto p-6 lg:p-12 pb-32 lg:pb-12">
               {view === 'admin-dashboard' && <AdminDashboard appointments={appointments} services={services} professionals={professionals} />}
@@ -327,7 +319,6 @@ const AppContent: React.FC = () => {
             </div>
           </main>
 
-          {/* Admin Mobile Bottom Nav */}
           <div className="lg:hidden fixed bottom-0 left-0 right-0 glass z-50 flex justify-around p-3 border-t border-white/50 shadow-2xl">
             <button onClick={() => navigate('admin-dashboard')} className={`p-4 rounded-2xl transition-all ${view === 'admin-dashboard' ? 'bg-rose-500 text-white shadow-lg' : 'text-slate-400'}`}><LayoutDashboard /></button>
             <button onClick={() => navigate('admin-appointments')} className={`p-4 rounded-2xl transition-all ${view === 'admin-appointments' ? 'bg-rose-500 text-white shadow-lg' : 'text-slate-400'}`}><Calendar /></button>
@@ -336,6 +327,36 @@ const AppContent: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Floating Cart Button */}
+      {preSelectedServiceIds.length > 0 && view !== 'booking' && !view.startsWith('admin') && (
+        <button
+          onClick={() => navigate('booking')}
+          className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-8 py-5 rounded-2xl shadow-2xl flex items-center space-x-4 animate-bounce-subtle hover:bg-slate-800 transition-all border border-white/10"
+        >
+          <div className="relative">
+            <Sparkles size={24} className="text-rose-400" />
+            <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-900">
+              {preSelectedServiceIds.length}
+            </span>
+          </div>
+          <div className="text-left">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none mb-1">Finalizar</p>
+            <p className="font-bold text-sm leading-none">Agendamento</p>
+          </div>
+          <ArrowRight size={20} className="text-rose-400" />
+        </button>
+      )}
+
+      <style>{`
+        @keyframes bounce-subtle {
+          0%, 100% { transform: translate(-50%, 0); }
+          50% { transform: translate(-50%, -5px); }
+        }
+        .animate-bounce-subtle {
+          animation: bounce-subtle 2s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 };

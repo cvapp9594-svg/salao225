@@ -16,7 +16,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 
 const Booking: React.FC<BookingProps> = ({ settings, services, professionals, preSelectedServiceIds = [], onComplete }) => {
   const { t, language } = useLanguage();
-  const [step, setStep] = useState(preSelectedServiceIds.length > 0 ? 2 : 1);
+  const [step, setStep] = useState(1); // Always start at Step 1 to allow cart review/multi-selection
   const [selectedServices, setSelectedServices] = useState<Service[]>(
     services.filter(s => preSelectedServiceIds.includes(s.id))
   );
@@ -26,27 +26,24 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
   const [clientName, setClientName] = useState('');
   const [clientPhone, setClientPhone] = useState('');
 
-  // Sync selectedServices when services are loaded/updated
+  // Sync selectedServices when props change (e.g. added from Home page)
   React.useEffect(() => {
-    if (services.length > 0 && preSelectedServiceIds.length > 0 && selectedServices.length === 0) {
-      const initial = services.filter(s => preSelectedServiceIds.includes(s.id));
-      if (initial.length > 0) {
-        setSelectedServices(initial);
-      }
+    const currentIds = selectedServices.map(s => s.id);
+    const hasChanged = preSelectedServiceIds.length !== currentIds.length ||
+      preSelectedServiceIds.some(id => !currentIds.includes(id));
+
+    if (hasChanged && services.length > 0) {
+      const updated = services.filter(s => preSelectedServiceIds.includes(s.id));
+      setSelectedServices(updated);
     }
-  }, [services, preSelectedServiceIds]);
+  }, [preSelectedServiceIds, services]);
 
   const activeServices = services.filter(s => s.isActive);
 
   const availableProfessionals = useMemo(() => {
-    if (selectedServices.length === 0) return [];
-    // Only show professionals that are ACTIVE and can handle AT LEAST ONE of the selected services
-    return professionals.filter(p => {
-      if (p.isActive === false) return false;
-      const proServices = p.services || [];
-      return selectedServices.some(s => proServices.includes(s.id));
-    });
-  }, [selectedServices, professionals]);
+    // Show ALL active professionals as requested by the user
+    return professionals.filter(p => p.isActive !== false);
+  }, [professionals]);
 
   const timeSlots = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
 
