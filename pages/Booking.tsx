@@ -26,6 +26,16 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
   const [clientName, setClientName] = useState('');
   const [clientPhone, setClientPhone] = useState('');
 
+  // Sync selectedServices when services are loaded/updated
+  React.useEffect(() => {
+    if (services.length > 0 && preSelectedServiceIds.length > 0 && selectedServices.length === 0) {
+      const initial = services.filter(s => preSelectedServiceIds.includes(s.id));
+      if (initial.length > 0) {
+        setSelectedServices(initial);
+      }
+    }
+  }, [services, preSelectedServiceIds]);
+
   const activeServices = services.filter(s => s.isActive);
 
   const availableProfessionals = useMemo(() => {
@@ -129,40 +139,50 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
         {step === 1 && (
           <div className="animate-fade-in-up">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {activeServices.map((service) => {
-                const isSelected = selectedServices.some(s => s.id === service.id);
-                return (
-                  <button
-                    key={service.id}
-                    onClick={() => toggleService(service)}
-                    className={`group flex flex-col p-6 rounded-3xl border-2 transition-all text-left relative overflow-hidden bg-white shadow-sm ${isSelected ? 'border-rose-500 bg-rose-50/20' : 'border-slate-50 hover:border-rose-200 hover:bg-rose-50/20'
-                      }`}
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className={`p-3 rounded-2xl transition-all ${isSelected ? 'bg-rose-500 text-white' : 'bg-slate-50 text-slate-300 group-hover:bg-rose-500 group-hover:text-white'
-                        }`}>
-                        <Sparkles size={20} />
+              {activeServices.length > 0 ? (
+                activeServices.map((service) => {
+                  const isSelected = selectedServices.some(s => s.id === service.id);
+                  return (
+                    <button
+                      key={service.id}
+                      onClick={() => toggleService(service)}
+                      className={`group flex flex-col p-6 rounded-3xl border-2 transition-all text-left relative overflow-hidden bg-white shadow-sm ${isSelected ? 'border-rose-500 bg-rose-50/20' : 'border-slate-50 hover:border-rose-200 hover:bg-rose-50/20'
+                        }`}
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div className={`p-3 rounded-2xl transition-all ${isSelected ? 'bg-rose-500 text-white' : 'bg-slate-50 text-slate-300 group-hover:bg-rose-500 group-hover:text-white'
+                          }`}>
+                          <Sparkles size={20} />
+                        </div>
+                        <span className="text-xl font-black text-slate-900">{service.price}$00</span>
                       </div>
-                      <span className="text-xl font-black text-slate-900">{service.price}$00</span>
-                    </div>
-                    <h4 className="font-black text-lg text-slate-800 mb-1">
-                      {language === 'en' ? t(`service.${service.id}.name` as any) : service.name}
-                    </h4>
-                    <p className="text-slate-500 text-sm line-clamp-2 mb-4">
-                      {language === 'en' ? t(`service.${service.id}.desc` as any) : service.description}
-                    </p>
-                    <div className="mt-auto flex items-center text-[10px] font-black uppercase tracking-widest text-slate-300">
-                      <Clock size={12} className="mr-1.5" />
-                      {service.duration} MIN
-                    </div>
-                    {isSelected && (
-                      <div className="absolute top-4 right-4 text-rose-500">
-                        <Check size={24} />
+                      <h4 className="font-black text-lg text-slate-800 mb-1">
+                        {language === 'en' ? t(`service.${service.id}.name` as any) : service.name}
+                      </h4>
+                      <p className="text-slate-500 text-sm line-clamp-2 mb-4">
+                        {language === 'en' ? t(`service.${service.id}.desc` as any) : service.description}
+                      </p>
+                      <div className="mt-auto flex items-center text-[10px] font-black uppercase tracking-widest text-slate-300">
+                        <Clock size={12} className="mr-1.5" />
+                        {service.duration} MIN
                       </div>
-                    )}
-                  </button>
-                );
-              })}
+                      {isSelected && (
+                        <div className="absolute top-4 right-4 text-rose-500">
+                          <Check size={24} />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="col-span-full py-20 text-center">
+                  <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+                    <Sparkles size={40} />
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">{t('booking.empty.title')}</h3>
+                  <p className="text-slate-500">{t('booking.empty.message')}</p>
+                </div>
+              )}
             </div>
 
             {selectedServices.length > 0 && (
@@ -188,7 +208,7 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
           </div>
         )}
 
-        {step === 2 && selectedServices.length > 0 && (
+        {step === 2 && (
           <div className="space-y-8 animate-fade-in-up flex-1 flex flex-col">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1">

@@ -115,9 +115,7 @@ const AppContent: React.FC = () => {
       if (v === 'booking' && serviceId) {
         setPreSelectedServiceIds(prev => prev.includes(serviceId) ? prev : [...prev, serviceId]);
       } else if (v === 'booking') {
-        // We don't necessarily want to clear it if navigating to booking, 
-        // unless it's a fresh start. Let's keep existing items if any.
-        // setPreSelectedServiceIds([]); 
+        setPreSelectedServiceIds([]);
       }
     }
     setIsMobileMenuOpen(false);
