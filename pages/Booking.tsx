@@ -257,23 +257,47 @@ const Booking: React.FC<BookingProps> = ({ settings, services, professionals, pr
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Previsão Data/Hora (Opcional)</label>
-                <div className="flex gap-2">
-                  <input
-                    type="date"
-                    className="flex-1 p-4 rounded-xl border-2 border-slate-50 focus:border-rose-300 focus:outline-none font-bold text-sm"
-                    value={selectedDate}
-                    onChange={e => setSelectedDate(e.target.value)}
-                  />
-                  <select
-                    className="flex-1 p-4 rounded-xl border-2 border-slate-50 focus:border-rose-300 focus:outline-none font-bold text-sm bg-white"
-                    value={selectedTime}
-                    onChange={e => setSelectedTime(e.target.value)}
-                  >
-                    <option value="">Horário</option>
-                    {timeSlots.map(t => <option key={t} value={t}>{t}</option>)}
-                  </select>
+              <div className="space-y-4 col-span-full">
+                <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Previsão de Data e Horário (Opcional)</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Escolha a Data</label>
+                    <input
+                      type="date"
+                      className="w-full p-4 rounded-xl border-2 border-slate-50 focus:border-rose-300 focus:outline-none font-bold text-sm"
+                      value={selectedDate}
+                      onChange={e => setSelectedDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Horário Personalizado</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: 08:45 ou 14:15"
+                      className="w-full p-4 rounded-xl border-2 border-slate-50 focus:border-rose-300 focus:outline-none font-bold text-sm"
+                      value={selectedTime}
+                      onChange={e => setSelectedTime(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Ou selecione um horário da tabela:</label>
+                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 bg-slate-50/50 p-4 rounded-3xl border-2 border-slate-50">
+                    {timeSlots.map(t => (
+                      <button
+                        key={t}
+                        type="button"
+                        onClick={() => setSelectedTime(t)}
+                        className={`py-2 px-1 rounded-lg text-xs font-black transition-all ${selectedTime === t
+                            ? 'bg-rose-500 text-white shadow-lg shadow-rose-200 scale-105'
+                            : 'bg-white text-slate-600 hover:border-rose-300 border border-transparent'
+                          }`}
+                      >
+                        {t}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
